@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rhodes Advisors — Lead Accountability Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green:   #03511f;
+    --cream:   #F1EAE1;
+    --lgray:   #efefef;
+    --lgreen:  #A9E67D;
+    --teal50:  #E1F5EE;
+    --teal400: #1D9E75;
+    --teal800: #085041;
+    --purple50:#EEEDFE;
+    --purple400:#534AB7;
+    --purple800:#3C3489;
+    --coral50: #FAECE7;
+    --coral400:#D85A30;
+    --coral800:#712B13;
+    --amber50: #FAEEDA;
+    --amber400:#BA7517;
+    --amber800:#633806;
+    --gray50:  #F1EFE8;
+    --gray400: #888780;
+    --gray800: #444441;
+    --panel-w: 420px;
+    --ease: cubic-bezier(.4,0,.2,1);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: #1a1a18;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background: var(--green);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--lgreen);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--green);
+    font-weight: 400;
+    flex-shrink: 0;
+  }
+
+  .header-text h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: #fff;
+    letter-spacing: 0.01em;
+  }
+
+  .header-text p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 300;
+    margin-top: 2px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .diagram-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 32px 40px;
+    transition: margin-right 0.35s var(--ease);
+  }
+
+  .diagram-area.shifted {
+    margin-right: var(--panel-w);
+  }
+
+  .diagram-hint {
+    font-size: 12px;
+    color: var(--gray400);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    font-weight: 400;
+  }
+
+  svg.diagram {
+    width: 100%;
+    max-width: 680px;
+  }
+
+  .node {
+    cursor: pointer;
+  }
+
+  .node rect, .node .bg {
+    transition: filter 0.15s;
+  }
+
+  .node:hover rect, .node:hover .bg {
+    filter: brightness(0.93);
+  }
+
+  .node:hover .overlap-bg {
+    filter: brightness(0.93);
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--gray800);
+  }
+
+  .legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  .legend-swatch.dashed {
+    border: 1.5px dashed var(--gray400);
+    background: var(--gray50);
+  }
+
+  /* Side panel */
+  .panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: var(--panel-w);
+    background: #fff;
+    border-left: 1px solid #e0dcd5;
+    transform: translateX(100%);
+    transition: transform 0.35s var(--ease);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow: hidden;
+  }
+
+  .panel.open {
+    transform: translateX(0);
+  }
+
+  .panel-header {
+    padding: 28px 28px 20px;
+    border-bottom: 1px solid #ece8e0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .panel-lead-label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .panel-tag {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 20px;
+    display: inline-block;
+    width: fit-content;
+  }
+
+  .panel-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.15;
+    color: #1a1a18;
+  }
+
+  .panel-subtitle {
+    font-size: 13px;
+    color: var(--gray400);
+    margin-top: 4px;
+    font-weight: 300;
+  }
+
+  .close-btn {
+    background: var(--lgray);
+    border: none;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+    font-size: 16px;
+    color: var(--gray800);
+    line-height: 1;
+    margin-top: 4px;
+  }
+
+  .close-btn:hover { background: #ddd; }
+
+  .panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px 36px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .responsibility-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .responsibility-item {
+    padding: 18px 0;
+    border-bottom: 1px solid #f0ece6;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .responsibility-item:last-child {
+    border-bottom: none;
+  }
+
+  .item-accent {
+    width: 4px;
+    min-width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    margin-top: 8px;
+    flex-shrink: 0;
+  }
+
+  .item-content {}
+
+  .item-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a18;
+    margin-bottom: 5px;
+    line-height: 1.35;
+  }
+
+  .item-body {
+    font-size: 13px;
+    color: #5a5752;
+    line-height: 1.65;
+    font-weight: 300;
+  }
+
+  .panel-overlap-note {
+    background: var(--gray50);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    font-size: 12.5px;
+    color: var(--gray800);
+    line-height: 1.6;
+    border-left: 3px solid var(--gray400);
+  }
+
+  .panel-overlap-note strong {
+    font-weight: 500;
+    color: #1a1a18;
+  }
+
+  .decision-rule {
+    background: #f7f4ef;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 20px;
+    font-size: 12.5px;
+    color: #1a1a18;
+    line-height: 1.6;
+  }
+
+  .decision-rule .dr-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray400);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  /* Overlay for mobile */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.25);
+    z-index: 99;
+    opacity: 0;
+    transition: opacity 0.35s var(--ease);
+  }
+
+  .overlay.visible {
+    display: block;
+    opacity: 1;
+  }
+
+  @media (max-width: 700px) {
+    :root { --panel-w: 100vw; }
+    .diagram-area.shifted { margin-right: 0; }
+    .overlay { display: block; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">R</div>
+  <div class="header-text">
+    <h1>Rhodes Advisors</h1>
+    <p>Lead Accountability Map</p>
+  </div>
+</header>
+
+<div class="main">
+  <div class="diagram-area" id="diagramArea">
+    <p class="diagram-hint">Click any section to view full responsibilities</p>
+
+    <svg class="diagram" viewBox="0 0 680 590" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#b4b2a9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- Connector lines -->
+      <line x1="120" y1="148" x2="340" y2="61" stroke="#ccc9c0" stroke-width="0.5"/>
+      <line x1="555" y1="148" x2="340" y2="61" stroke="#ccc9c0" stroke-width="0.5"/>
+      <line x1="120" y1="148" x2="115" y2="258" stroke="#ccc9c0" stroke-width="0.5"/>
+      <line x1="120" y1="408" x2="115" y2="320" stroke="#ccc9c0" stroke-width="0.5"/>
+      <line x1="555" y1="148" x2="540" y2="258" stroke="#ccc9c0" stroke-width="0.5"/>
+      <line x1="555" y1="408" x2="540" y2="320" stroke="#ccc9c0" stroke-width="0.5"/>
+      <line x1="555" y1="408" x2="340" y2="468" stroke="#ccc9c0" stroke-width="0.5"/>
+      <line x1="120" y1="408" x2="340" y2="468" stroke="#ccc9c0" stroke-width="0.5"/>
+      <line x1="340" y1="92" x2="340" y2="249" stroke="#b4b2a9" stroke-width="0.5" stroke-dasharray="4 3"/>
+      <line x1="195" y1="289" x2="253" y2="289" stroke="#b4b2a9" stroke-width="0.5" stroke-dasharray="4 3"/>
+      <line x1="428" y1="289" x2="460" y2="289" stroke="#b4b2a9" stroke-width="0.5" stroke-dasharray="4 3"/>
+      <line x1="340" y1="329" x2="340" y2="468" stroke="#b4b2a9" stroke-width="0.5" stroke-dasharray="4 3"/>
+
+      <!-- Marketing Lead (teal) -->
+      <g class="node" data-id="marketing" tabindex="0" role="button" aria-label="Marketing Lead">
+        <rect x="35" y="105" width="170" height="86" rx="8" fill="#E1F5EE" stroke="#1D9E75" stroke-width="0.5"/>
+        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="120" y="137" text-anchor="middle" dominant-baseline="central" fill="#085041">Marketing lead</text>
+        <text font-family="'DM Sans', sans-serif" font-size="12" x="120" y="158" text-anchor="middle" dominant-baseline="central" fill="#0F6E56">Top-of-funnel growth</text>
+        <text font-family="'DM Sans', sans-serif" font-size="12" x="120" y="175" text-anchor="middle" dominant-baseline="central" fill="#0F6E56">Brand and positioning</text>
+      </g>
+
+      <!-- Tech Lead (purple) -->
+      <g class="node" data-id="tech" tabindex="0" role="button" aria-label="Tech Lead">
+        <rect x="470" y="105" width="170" height="86" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="555" y="137" text-anchor="middle" dominant-baseline="central" fill="#3C3489">Tech lead</text>
+        <text font-family="'DM Sans', sans-serif" font-size="12" x="555" y="158" text-anchor="middle" dominant-baseline="central" fill="#534AB7">Systems and martech</text>
+        <text font-family="'DM Sans', sans-serif" font-size="12" x="555" y="175" text-anchor="middle" dominant-baseline="central" fill="#534AB7">Data and integrations</text>
+      </g>
+
+      <!-- Enrollment Lead (coral) -->
+      <g class="node" data-id="enrollment" tabindex="0" role="button" aria-label="Enrollment Lead">
+        <rect x="35" y="365" width="170" height="86" rx="8" fill="#FAECE7" stroke="#D85A30" stroke-width="0.5"/>
+        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="120" y="397" text-anchor="middle" dominant-baseline="central" fill="#712B13">Enrollment lead</text>
+        <text font-family="'DM Sans', sans-serif" font-size="12" x="120" y="418" text-anchor="middle" dominant-baseline="central" fill="#993C1D">Inquiry-to-enrollment</text>
+        <text font-family="'DM Sans', sans-serif" font-size="12" x="120" y="435" text-anchor="middle" dominant-baseline="central" fill="#993C1D">Yield and pipeline</text>
+      </g>
+
+      <!-- Finance Lead (amber) -->
+      <g class="node" data-id="finance" tabindex="0" role="button" aria-label="Finance Lead">
+        <rect x="470" y="365" width="170" height="86" rx="8" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
+        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="555" y="397" text-anchor="middle" dominant-baseline="central" fill="#633806">Finance lead</text>
+        <text font-family="'DM Sans', sans-serif" font-size="12" x="555" y="418" text-anchor="middle" dominant-baseline="central" fill="#854F0B">Revenue and ROI</text>
+        <text font-family="'DM Sans', sans-serif" font-size="12" x="555" y="435" text-anchor="middle" dominant-baseline="central" fill="#854F0B">Aid, pricing, forecast</text>
+      </g>
+
+      <!-- Overlap: Mkt + Tech -->
+      <g class="node" data-id="mkt-tech" tabindex="0" role="button" aria-label="Marketing and Tech overlap">
+        <rect x="260" y="30" width="160" height="62" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="340" y="52" text-anchor="middle" dominant-baseline="central" fill="#444441">Mkt + Tech</text>
+        <text font-family="'DM Sans', sans-serif" font-size="12" x="340" y="72" text-anchor="middle" dominant-baseline="central" fill="#5F5E5A">Mkt drives, Tech builds</text>
+      </g>
+
+      <!-- Overlap: Mkt + Enrollment -->
+      <g class="node" data-id="mkt-enrollment" tabindex="0" role="button" aria-label="Marketing and Enrollment overlap">
+        <rect x="35" y="258" width="160" height="62" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="115" y="278" text-anchor="middle" dominant-baseline="central" fill="#444441">Mkt + Enrollment</text>
+        <text font-family="'DM Sans', sans-serif" font-size="12" x="115" y="300" text-anchor="middle" dominant-baseline="central" fill="#5F5E5A">Enrollment owns outcome</text>
+      </g>
+
+      <!-- Overlap: Tech + Finance -->
+      <g class="node" data-id="tech-finance" tabindex="0" role="button" aria-label="Tech and Finance overlap">
+        <rect x="460" y="258" width="160" height="62" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="540" y="278" text-anchor="middle" dominant-baseline="central" fill="#444441">Tech + Finance</text>
+        <text font-family="'DM Sans', sans-serif" font-size="12" x="540" y="300" text-anchor="middle" dominant-baseline="central" fill="#5F5E5A">Finance owns the metric</text>
+      </g>
+
+      <!-- Overlap: Enroll + Finance -->
+      <g class="node" data-id="enroll-finance" tabindex="0" role="button" aria-label="Enrollment and Finance overlap">
+        <rect x="260" y="468" width="160" height="62" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="340" y="488" text-anchor="middle" dominant-baseline="central" fill="#444441">Enroll + Finance</text>
+        <text font-family="'DM Sans', sans-serif" font-size="12" x="340" y="510" text-anchor="middle" dominant-baseline="central" fill="#5F5E5A">Finance owns policy</text>
+      </g>
+
+      <!-- Analytics center (dashed) -->
+      <g class="node" data-id="analytics" tabindex="0" role="button" aria-label="Analytics grey area">
+        <rect x="253" y="249" width="175" height="80" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="340" y="270" text-anchor="middle" dominant-baseline="central" fill="#444441">Analytics</text>
+        <text font-family="'DM Sans', sans-serif" font-size="12" x="340" y="291" text-anchor="middle" dominant-baseline="central" fill="#5F5E5A">All four have opinions</text>
+        <text font-family="'DM Sans', sans-serif" font-size="12" x="340" y="312" text-anchor="middle" dominant-baseline="central" fill="#5F5E5A">Assign a clear owner</text>
+      </g>
+    </svg>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#E1F5EE;border:1px solid #1D9E75;"></div>
+        <span>Sole owner, fixes the problem</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#F1EFE8;border:1px solid #888780;"></div>
+        <span>Shared input, one leads</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch dashed"></div>
+        <span>Grey area, needs owner</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Responsibility detail">
+    <div class="panel-header">
+      <div class="panel-lead-label">
+        <span class="panel-tag" id="panelTag"></span>
+        <div class="panel-title" id="panelTitle"></div>
+        <div class="panel-subtitle" id="panelSubtitle"></div>
+      </div>
+      <button class="close-btn" id="closeBtn" aria-label="Close panel">&#x2715;</button>
+    </div>
+    <div class="panel-body" id="panelBody"></div>
+  </div>
+</div>
+
+<script>
+const data = {
+  marketing: {
+    title: "Marketing lead",
+    subtitle: "Sole accountability zone — no committee needed",
+    tag: "Primary owner",
+    tagBg: "#E1F5EE",
+    tagColor: "#085041",
+    type: "primary",
+    items: [
+      {
+        title: "Brand and market position",
+        body: "How programs are positioned, named, and messaged in the market. Differentiation from competitors. No other lead resolves a positioning problem — they can surface it, but the Marketing Lead owns the fix."
+      },
+      {
+        title: "Top-of-funnel inquiry volume",
+        body: "When qualified inquiry volume is too low, that is a marketing problem. The Marketing Lead owns paid media strategy, channel mix, spend allocation, and vendor oversight. When the funnel is starving at the top, neither Enrollment nor Finance fixes it."
+      },
+      {
+        title: "Campaign creative and execution",
+        body: "Copy, creative direction, landing pages, email content strategy, and ad creative all live here. The Marketing Lead approves narrative direction and ensures every campaign asset accurately and compellingly reflects the program's value proposition."
+      },
+      {
+        title: "Vendor and agency oversight",
+        body: "When a paid media agency, SEO partner, or content vendor is underperforming, the Marketing Lead owns that relationship and remediation. Tech may have opinions about tracking or integrations, but the vendor accountability chain ends with Marketing."
+      },
+      {
+        title: "SEO and organic content strategy",
+        body: "If a program is invisible in organic search, that is a Marketing Lead problem. Keyword strategy, content calendar, and inbound architecture belong here exclusively."
+      },
+      {
+        title: "Messaging accuracy and value proposition clarity",
+        body: "If prospective students do not understand what a program does, who it is for, or why it matters, that is a Marketing Lead failure. The Enrollment Lead can surface the symptom — drop-off is high, inquiries ask basic questions — but the fix is a marketing one."
+      },
+      {
+        title: "Program launch readiness (go-to-market)",
+        body: "When a new program needs to go to market, the Marketing Lead owns the GTM strategy: audience targeting, positioning, channel strategy, and launch sequencing. The Enrollment Lead activates the funnel once leads arrive. The Marketing Lead builds the environment those leads come from."
+      }
+    ],
+    rule: "If you could fix it by rewriting the ads, changing the messaging, reallocating spend, or replacing a vendor — it belongs to the Marketing Lead."
+  },
+
+  tech: {
+    title: "Tech lead",
+    subtitle: "Sole accountability zone — no committee needed",
+    tag: "Primary owner",
+    tagBg: "#EEEDFE",
+    tagColor: "#3C3489",
+    type: "primary",
+    items: [
+      {
+        title: "CRM architecture and configuration",
+        body: "Platform decisions, data structure, automation logic, and system performance. If the CRM is misfiring, misrouting, or failing to segment correctly, this is a Tech Lead problem to solve — not an enrollment or marketing one."
+      },
+      {
+        title: "Martech stack selection and governance",
+        body: "Evaluating, procuring, and deprecating marketing and enrollment technology tools. The Tech Lead carries the decision on what gets added to the stack, what gets removed, and how tools are governed across the org."
+      },
+      {
+        title: "Data infrastructure and integrations",
+        body: "How systems talk to each other. API connections, data pipelines, and feed reliability. When data is not flowing between platforms correctly, this is a Tech Lead problem regardless of which team surfaces it."
+      },
+      {
+        title: "Analytics implementation and instrumentation",
+        body: "GA4, GTM, tracking pixels, and dashboard infrastructure. If data is not being captured, is misconfigured, or is producing misleading numbers because of faulty implementation, the Tech Lead owns the fix."
+      },
+      {
+        title: "Website and digital infrastructure",
+        body: "Uptime, page performance, technical SEO health, and the development roadmap. Marketing may identify a landing page problem; the Tech Lead resolves it on the infrastructure side."
+      },
+      {
+        title: "Systems security and data compliance",
+        body: "Data governance, FERPA compliance for technology systems, access controls, and audit readiness. No other lead can resolve a data security or compliance exposure at the systems level."
+      }
+    ],
+    rule: "If you could fix it by reconfiguring a system, rebuilding an integration, or replacing a technical component — it belongs to the Tech Lead."
+  },
+
+  enrollment: {
+    title: "Enrollment lead",
+    subtitle: "Sole accountability zone — no committee needed",
+    tag: "Primary owner",
+    tagBg: "#FAECE7",
+    tagColor: "#712B13",
+    type: "primary",
+    items: [
+      {
+        title: "Inquiry response and follow-up cadences",
+        body: "Speed-to-contact, outreach sequences, and advisor communication protocols. Once a prospect raises their hand, how quickly and how well the team responds is a pure Enrollment Lead problem."
+      },
+      {
+        title: "Application pipeline management",
+        body: "Monitoring application volume, completion rates, and decision timelines by program. If applications are stalling or abandoning, the Enrollment Lead owns the diagnosis and the fix."
+      },
+      {
+        title: "Yield strategy and admitted-to-enrolled conversion",
+        body: "Converting admitted students to enrolled students. Financial aid leveraging, event strategy, and personalized outreach during the decision period are Enrollment Lead responsibilities. Finance sets the aid policy; Enrollment executes it."
+      },
+      {
+        title: "Advisor performance and capacity",
+        body: "Hiring, training, managing, and holding enrollment advisors accountable. Load distribution, performance standards, and professional development sit here. No other lead fixes an advisor performance problem."
+      },
+      {
+        title: "Prospect communications post-inquiry",
+        body: "What advisors say, how they say it, and how frequently they reach out once a lead is in the funnel. Marketing owns top-of-funnel messaging. Enrollment owns the conversation after the hand-raise."
+      },
+      {
+        title: "Enrollment reporting to institutional leadership",
+        body: "Communicating funnel health, projections, and variance to Deans, Provosts, and institutional stakeholders. The Enrollment Lead is accountable for the accuracy and cadence of these reports."
+      }
+    ],
+    rule: "If you could fix it by changing what happens after a prospect raises their hand — the cadence, the conversation, the process — it belongs to the Enrollment Lead."
+  },
+
+  finance: {
+    title: "Finance lead",
+    subtitle: "Sole accountability zone — no committee needed",
+    tag: "Primary owner",
+    tagBg: "#FAEEDA",
+    tagColor: "#633806",
+    type: "primary",
+    items: [
+      {
+        title: "Tuition pricing and discount rate policy",
+        body: "Setting list price and net tuition revenue targets by program. Pricing decisions belong exclusively to the Finance Lead. Other leads provide context (enrollment demand, competitive benchmarks) but do not set the number."
+      },
+      {
+        title: "Financial aid packaging strategy",
+        body: "Scholarship ladders, aid policy design, and discount rate governance. The Finance Lead owns the framework. The Enrollment Lead deploys it with individual students, but cannot override the policy without Finance approval."
+      },
+      {
+        title: "Revenue forecasting and budget modeling",
+        body: "Translating enrollment projections into financial outcomes. What does a 5% enrollment shortfall mean for net tuition revenue? The Finance Lead answers that question and owns the accuracy of the model."
+      },
+      {
+        title: "Program financial sustainability analysis",
+        body: "Determining whether a program is financially viable based on margin, not just enrollment volume. Recommending continuation, restructuring, or sunsetting based on financial performance. This call belongs to the Finance Lead."
+      },
+      {
+        title: "Cost-per-enrolled-student targets and CAC benchmarks",
+        body: "Setting the financial standard for how much the institution can afford to spend to acquire an enrolled student. Marketing and Enrollment optimize toward this number — the Finance Lead sets it."
+      },
+      {
+        title: "Budget allocation across the enrollment function",
+        body: "How dollars are distributed across marketing spend, enrollment operations, advisor headcount, and technology. The Finance Lead owns the allocation decision and holds the other three leads accountable to their budgets."
+      }
+    ],
+    rule: "If you could fix it by changing a number, a policy, or a financial model — it belongs to the Finance Lead."
+  },
+
+  "mkt-tech": {
+    title: "Marketing + Tech",
+    subtitle: "Shared input — marketing drives, Tech builds",
+    tag: "Shared zone",
+    tagBg: "#F1EFE8",
+    tagColor: "#444441",
+    type: "overlap",
+    overlapNote: "Both leads have legitimate standing here. The rule is not about who is right — it is about who carries the outcome. When they conflict, use the decision rule below.",
+    items: [
+      {
+        title: "Campaign infrastructure and tracking setup",
+        body: "UTM architecture, pixel implementation, and tag management configuration. Marketing defines what needs to be measured; Tech builds the infrastructure that captures it. If campaigns are running blind, both leads share accountability — Marketing for not specifying requirements, Tech for not implementing correctly."
+      },
+      {
+        title: "Martech tool selection when Marketing is the primary user",
+        body: "When the primary beneficiary of a tool is the marketing function — email platforms, ad tech, landing page tools — Marketing leads the requirements definition and Tech leads the evaluation, procurement, and integration."
+      },
+      {
+        title: "Website performance as it affects campaign outcomes",
+        body: "Slow load times, broken forms, and poor mobile experiences affect conversion rates. Marketing surfaces the impact; Tech resolves the underlying cause. Neither can fix this alone."
+      },
+      {
+        title: "Digital execution where strategy and systems intersect",
+        body: "New landing page builds, A/B testing infrastructure, and personalization engines require both leads to be active. Marketing owns the hypothesis and the creative. Tech owns the tooling and the measurement."
+      }
+    ],
+    rule: "If the question is 'what should we say and to whom' — Marketing leads. If the question is 'how do we build it and measure it' — Tech leads."
+  },
+
+  "mkt-enrollment": {
+    title: "Marketing + Enrollment",
+    subtitle: "Shared input — Enrollment owns the outcome",
+    tag: "Shared zone",
+    tagBg: "#F1EFE8",
+    tagColor: "#444441",
+    type: "overlap",
+    overlapNote: "The handoff between marketing and enrollment is the most common source of dropped balls in higher ed. Marketing fills the funnel; Enrollment converts it. Neither team can succeed without the other's cooperation.",
+    items: [
+      {
+        title: "Lead nurture content and email sequences",
+        body: "Marketing produces the content; Enrollment advises on what prospects actually ask, object to, and respond to. Nurture sequences require both. Marketing owns the writing and the send logic. Enrollment owns the feedback loop that improves them."
+      },
+      {
+        title: "Messaging consistency across the funnel",
+        body: "When an ad makes a claim and an advisor says something different, prospects notice. Aligning what Marketing says in campaigns with what Enrollment says in conversations requires both leads to review and approve touchpoints. Neither can enforce consistency alone."
+      },
+      {
+        title: "Inquiry-stage prospect experience",
+        body: "The moment between a prospect clicking an ad and an advisor making first contact involves both leads. Marketing owns the landing page and the auto-responder. Enrollment owns everything that happens after the form submission."
+      },
+      {
+        title: "Program positioning feedback from the field",
+        body: "Advisors hear what prospects say about programs every day. That intelligence should directly inform marketing messaging. The Enrollment Lead owns the feedback loop; the Marketing Lead owns the action on it."
+      }
+    ],
+    rule: "If the prospect has not yet submitted an inquiry — Marketing owns the problem. Once they raise their hand — Enrollment owns the relationship."
+  },
+
+  "tech-finance": {
+    title: "Tech + Finance",
+    subtitle: "Shared input — Finance owns the metric",
+    tag: "Shared zone",
+    tagBg: "#F1EFE8",
+    tagColor: "#444441",
+    type: "overlap",
+    overlapNote: "Finance depends on Tech to produce accurate, timely data. Tech depends on Finance to define what matters. Without alignment here, financial models run on bad numbers and technology investment decisions are made without ROI context.",
+    items: [
+      {
+        title: "Reporting architecture and dashboard infrastructure",
+        body: "Tech builds the dashboards; Finance defines what goes in them. When a report shows the wrong number, both leads are accountable — Finance for not specifying requirements clearly, Tech for not implementing them correctly."
+      },
+      {
+        title: "Technology budget decisions and ROI evaluation",
+        body: "Finance owns the budget and the standard for return. Tech owns the cost estimate and the benefit projection. Neither can make a sound technology investment decision without the other's input."
+      },
+      {
+        title: "Data accuracy in financial models",
+        body: "When Finance builds a revenue forecast off enrollment data that Tech is responsible for capturing and surfacing, any error in the data pipeline becomes both teams' problem. They must agree on a single source of truth."
+      },
+      {
+        title: "Vendor spend analysis for technology tools",
+        body: "Finance reviews the spend; Tech defends the value. Annual technology stack reviews require both leads at the table to evaluate whether each tool is earning its cost."
+      }
+    ],
+    rule: "If the question is 'is the number right' — Finance leads. If the question is 'why isn't the number appearing' — Tech leads."
+  },
+
+  "enroll-finance": {
+    title: "Enrollment + Finance",
+    subtitle: "Shared input — Finance sets policy, Enrollment executes",
+    tag: "Shared zone",
+    tagBg: "#F1EFE8",
+    tagColor: "#444441",
+    type: "overlap",
+    overlapNote: "Aid strategy is the single highest-leverage decision in enrollment management, and it sits directly at the intersection of these two leads. Misalignment here costs institutions money and students.",
+    items: [
+      {
+        title: "Aid packaging and scholarship deployment",
+        body: "Finance designs the aid ladder and sets discount rate guardrails. Enrollment applies it to individual admitted students. Enrollment cannot exceed the parameters Finance has set, but Finance relies on Enrollment's field experience to know whether the aid packages are competitive."
+      },
+      {
+        title: "Yield modeling and enrollment projections",
+        body: "Finance uses enrollment projections to build financial models. Enrollment builds those projections from funnel data. If the projections are wrong, both leads own part of the failure — Enrollment for inaccurate funnel reads, Finance for inadequate scenario modeling."
+      },
+      {
+        title: "Discount rate strategy by program",
+        body: "Some programs can sustain a higher discount to drive volume; others cannot. Finance sets the ceiling by program. Enrollment advises on competitive context. This is a standing conversation, not a once-a-year decision."
+      },
+      {
+        title: "Enrollment targets tied to financial goals",
+        body: "Finance sets revenue targets; Enrollment translates them into enrollment goals. When targets are misaligned — either too aggressive given market conditions or too conservative given capacity — both leads must surface the conflict and resolve it together."
+      }
+    ],
+    rule: "If the question is 'what is our aid policy' — Finance leads. If the question is 'how do we deploy that policy with individual students' — Enrollment leads."
+  },
+
+  analytics: {
+    title: "Analytics",
+    subtitle: "Grey area — requires a named owner",
+    tag: "Grey area",
+    tagBg: "#F1EFE8",
+    tagColor: "#444441",
+    type: "grey",
+    overlapNote: "All four leads have a legitimate claim on analytics. Marketing needs attribution data. Tech owns the infrastructure. Enrollment needs funnel reporting. Finance needs ROI measurement. This is the most common source of accountability gaps in enrollment organizations.",
+    items: [
+      {
+        title: "Marketing attribution reporting",
+        body: "Which channels are driving qualified inquiries? What is the cost per inquiry by source? Marketing needs these numbers to allocate spend. Without a named analytics owner, these reports either do not exist or are built inconsistently by each team."
+      },
+      {
+        title: "Enrollment funnel reporting",
+        body: "Conversion rates from inquiry to application, application to admit, admit to enrolled — by program, by source, by time period. Enrollment needs these numbers to manage pipeline. Finance needs them to build forecasts. Without a single source of truth, each team builds its own version."
+      },
+      {
+        title: "Technology and systems performance reporting",
+        body: "Is the CRM performing as expected? Are integrations passing data accurately? Tech needs visibility here. But these reports often live in the same infrastructure as marketing and enrollment dashboards, creating shared-tool confusion about who maintains what."
+      },
+      {
+        title: "ROI and cost-per-enrolled-student measurement",
+        body: "Finance needs a number that combines marketing spend, enrollment operations cost, and aid packaging into a true CAC. Producing that number requires data from all four functions. Without a named owner who can access all four data sources, this calculation either never gets made or is made differently by each lead."
+      },
+      {
+        title: "The recommended ownership model",
+        body: "Assign analytics ownership to the Tech Lead, with defined service-level agreements to each of the other three leads. Tech builds and maintains the infrastructure. Marketing, Enrollment, and Finance each get a named report owner within the Tech function responsible for their specific dashboards. This preserves accountability without fragmenting the data infrastructure."
+      }
+    ],
+    rule: "Without a named analytics owner, this becomes everyone's problem and no one's accountability. Name the owner now."
+  }
+};
+
+const panel = document.getElementById('panel');
+const panelTitle = document.getElementById('panelTitle');
+const panelSubtitle = document.getElementById('panelSubtitle');
+const panelTag = document.getElementById('panelTag');
+const panelBody = document.getElementById('panelBody');
+const closeBtn = document.getElementById('closeBtn');
+const overlay = document.getElementById('overlay');
+const diagramArea = document.getElementById('diagramArea');
+
+function openPanel(id) {
+  const d = data[id];
+  if (!d) return;
+
+  panelTag.textContent = d.tag;
+  panelTag.style.background = d.tagBg;
+  panelTag.style.color = d.tagColor;
+  panelTitle.textContent = d.title;
+  panelSubtitle.textContent = d.subtitle;
+
+  let html = '';
+
+  if (d.overlapNote) {
+    html += `<div class="panel-overlap-note">${d.overlapNote}</div>`;
+  }
+
+  html += '<ul class="responsibility-list">';
+  d.items.forEach(item => {
+    const accentColor = d.tagColor;
+    html += `<li class="responsibility-item">
+      <div class="item-accent" style="background:${accentColor};"></div>
+      <div class="item-content">
+        <div class="item-title">${item.title}</div>
+        <div class="item-body">${item.body}</div>
+      </div>
+    </li>`;
+  });
+  html += '</ul>';
+
+  if (d.rule) {
+    html += `<div class="decision-rule">
+      <div class="dr-label">Decision rule</div>
+      <div>${d.rule}</div>
+    </div>`;
+  }
+
+  panelBody.innerHTML = html;
+  panelBody.scrollTop = 0;
+
+  panel.classList.add('open');
+  diagramArea.classList.add('shifted');
+  overlay.classList.add('visible');
+}
+
+function closePanel() {
+  panel.classList.remove('open');
+  diagramArea.classList.remove('shifted');
+  overlay.classList.remove('visible');
+}
+
+document.querySelectorAll('.node[data-id]').forEach(node => {
+  node.addEventListener('click', () => openPanel(node.dataset.id));
+  node.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openPanel(node.dataset.id);
+    }
+  });
+});
+
+closeBtn.addEventListener('click', closePanel);
+overlay.addEventListener('click', closePanel);
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closePanel();
+});
+</script>
+</body>
+</html>
