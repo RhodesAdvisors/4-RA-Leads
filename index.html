@@ -10,354 +10,71 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --green:   #03511f;
-    --cream:   #F1EAE1;
-    --lgray:   #efefef;
-    --lgreen:  #A9E67D;
-    --teal50:  #E1F5EE;
-    --teal400: #1D9E75;
-    --teal800: #085041;
-    --purple50:#EEEDFE;
-    --purple400:#534AB7;
-    --purple800:#3C3489;
-    --coral50: #FAECE7;
-    --coral400:#D85A30;
-    --coral800:#712B13;
-    --amber50: #FAEEDA;
-    --amber400:#BA7517;
-    --amber800:#633806;
-    --gray50:  #F1EFE8;
-    --gray400: #888780;
-    --gray800: #444441;
-    --panel-w: 420px;
-    --ease: cubic-bezier(.4,0,.2,1);
+    --green:#03511f; --cream:#F1EAE1; --lgray:#efefef; --lgreen:#A9E67D;
+    --panel-w:430px; --ease:cubic-bezier(.4,0,.2,1);
   }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: #1a1a18;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+  body { font-family:'DM Sans',sans-serif; background:var(--cream); color:#1a1a18; min-height:100vh; display:flex; flex-direction:column; }
 
-  header {
-    background: var(--green);
-    padding: 20px 40px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
+  header { background:var(--green); padding:20px 40px; display:flex; align-items:center; gap:16px; }
+  .logo-mark { width:44px; height:44px; border-radius:4px; overflow:hidden; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .header-text h1 { font-family:'DM Serif Display',serif; font-size:17px; font-weight:400; color:#fff; }
+  .header-text p { font-size:12px; color:rgba(255,255,255,.5); font-weight:300; margin-top:2px; letter-spacing:.05em; text-transform:uppercase; }
 
-  .logo-mark {
-    width: 36px;
-    height: 36px;
-    background: var(--lgreen);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'DM Serif Display', serif;
-    font-size: 18px;
-    color: var(--green);
-    font-weight: 400;
-    flex-shrink: 0;
-  }
+  .main { flex:1; display:flex; overflow:hidden; }
 
-  .header-text h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 17px;
-    font-weight: 400;
-    color: #fff;
-    letter-spacing: 0.01em;
-  }
+  .diagram-area { flex:1; display:flex; flex-direction:column; align-items:center; padding:32px 24px 40px; transition:margin-right .35s var(--ease); }
+  .diagram-area.shifted { margin-right:var(--panel-w); }
 
-  .header-text p {
-    font-size: 12px;
-    color: rgba(255,255,255,0.55);
-    font-weight: 300;
-    margin-top: 2px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
+  .diagram-hint { font-size:11.5px; color:#888780; letter-spacing:.05em; text-transform:uppercase; margin-bottom:18px; }
 
-  .main {
-    flex: 1;
-    display: flex;
-    overflow: hidden;
-    position: relative;
-  }
+  svg.diagram { width:100%; max-width:700px; }
 
-  .diagram-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px 32px 40px;
-    transition: margin-right 0.35s var(--ease);
-  }
+  .node { cursor:pointer; }
+  .node:hover .node-bg { filter:brightness(.91); }
 
-  .diagram-area.shifted {
-    margin-right: var(--panel-w);
-  }
+  .legend { display:flex; align-items:center; gap:20px; margin-top:20px; flex-wrap:wrap; justify-content:center; }
+  .legend-item { display:flex; align-items:center; gap:8px; font-size:12px; color:#444441; }
+  .legend-swatch { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
 
-  .diagram-hint {
-    font-size: 12px;
-    color: var(--gray400);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-    font-weight: 400;
-  }
+  /* Panel */
+  .panel { position:fixed; top:0; right:0; bottom:0; width:var(--panel-w); background:#fff; border-left:1px solid #e0dcd5; transform:translateX(100%); transition:transform .35s var(--ease); display:flex; flex-direction:column; z-index:100; }
+  .panel.open { transform:translateX(0); }
 
-  svg.diagram {
-    width: 100%;
-    max-width: 680px;
-  }
+  .panel-header { padding:26px 28px 18px; border-bottom:1px solid #ece8e0; display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-shrink:0; }
+  .panel-meta { display:flex; flex-direction:column; gap:8px; }
+  .panel-tag { font-size:11px; letter-spacing:.08em; text-transform:uppercase; font-weight:500; padding:3px 9px; border-radius:20px; display:inline-block; width:fit-content; }
+  .panel-title { font-family:'DM Serif Display',serif; font-size:26px; font-weight:400; line-height:1.15; color:#1a1a18; }
+  .panel-subtitle { font-size:13px; color:#888780; font-weight:300; }
+  .one-thing-box { padding:10px 14px; border-radius:8px; display:flex; flex-direction:column; gap:3px; }
+  .one-thing-lbl { font-size:10px; letter-spacing:.1em; text-transform:uppercase; font-weight:500; opacity:.65; }
+  .one-thing-val { font-size:15px; font-weight:500; line-height:1.3; }
+  .close-btn { background:var(--lgray); border:none; cursor:pointer; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:16px; color:#444441; margin-top:4px; transition:background .15s; }
+  .close-btn:hover { background:#ddd; }
 
-  .node {
-    cursor: pointer;
-  }
+  .panel-body { flex:1; overflow-y:auto; padding:22px 28px 36px; }
 
-  .node rect, .node .bg {
-    transition: filter 0.15s;
-  }
+  .resp-list { list-style:none; display:flex; flex-direction:column; }
+  .resp-item { padding:17px 0; border-bottom:1px solid #f0ece6; display:flex; gap:14px; }
+  .resp-item:last-child { border-bottom:none; }
+  .item-dot { width:4px; min-width:4px; height:4px; border-radius:50%; margin-top:8px; flex-shrink:0; }
+  .item-title { font-size:14px; font-weight:500; color:#1a1a18; margin-bottom:5px; line-height:1.35; }
+  .item-body { font-size:13px; color:#5a5752; line-height:1.65; font-weight:300; }
 
-  .node:hover rect, .node:hover .bg {
-    filter: brightness(0.93);
-  }
+  .overlap-note { background:#F1EFE8; border-radius:8px; padding:14px 16px; margin-bottom:20px; font-size:12.5px; color:#444441; line-height:1.6; border-left:3px solid #888780; }
+  .rule-box { background:#f7f4ef; border-radius:8px; padding:14px 16px; margin-top:20px; font-size:12.5px; color:#1a1a18; line-height:1.6; }
+  .rule-label { font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:#888780; font-weight:500; margin-bottom:6px; }
 
-  .node:hover .overlap-bg {
-    filter: brightness(0.93);
-  }
+  .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.25); z-index:99; opacity:0; transition:opacity .35s var(--ease); }
+  .overlay.visible { display:block; opacity:1; }
 
-  /* Legend */
-  .legend {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    margin-top: 28px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    color: var(--gray800);
-  }
-
-  .legend-swatch {
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-  }
-
-  .legend-swatch.dashed {
-    border: 1.5px dashed var(--gray400);
-    background: var(--gray50);
-  }
-
-  /* Side panel */
-  .panel {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: var(--panel-w);
-    background: #fff;
-    border-left: 1px solid #e0dcd5;
-    transform: translateX(100%);
-    transition: transform 0.35s var(--ease);
-    display: flex;
-    flex-direction: column;
-    z-index: 100;
-    overflow: hidden;
-  }
-
-  .panel.open {
-    transform: translateX(0);
-  }
-
-  .panel-header {
-    padding: 28px 28px 20px;
-    border-bottom: 1px solid #ece8e0;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    flex-shrink: 0;
-  }
-
-  .panel-lead-label {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .panel-tag {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-weight: 500;
-    padding: 3px 9px;
-    border-radius: 20px;
-    display: inline-block;
-    width: fit-content;
-  }
-
-  .panel-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 26px;
-    font-weight: 400;
-    line-height: 1.15;
-    color: #1a1a18;
-  }
-
-  .panel-subtitle {
-    font-size: 13px;
-    color: var(--gray400);
-    margin-top: 4px;
-    font-weight: 300;
-  }
-
-  .close-btn {
-    background: var(--lgray);
-    border: none;
-    cursor: pointer;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background 0.15s;
-    font-size: 16px;
-    color: var(--gray800);
-    line-height: 1;
-    margin-top: 4px;
-  }
-
-  .close-btn:hover { background: #ddd; }
-
-  .panel-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px 28px 36px;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .responsibility-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .responsibility-item {
-    padding: 18px 0;
-    border-bottom: 1px solid #f0ece6;
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-  }
-
-  .responsibility-item:last-child {
-    border-bottom: none;
-  }
-
-  .item-accent {
-    width: 4px;
-    min-width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    margin-top: 8px;
-    flex-shrink: 0;
-  }
-
-  .item-content {}
-
-  .item-title {
-    font-size: 14px;
-    font-weight: 500;
-    color: #1a1a18;
-    margin-bottom: 5px;
-    line-height: 1.35;
-  }
-
-  .item-body {
-    font-size: 13px;
-    color: #5a5752;
-    line-height: 1.65;
-    font-weight: 300;
-  }
-
-  .panel-overlap-note {
-    background: var(--gray50);
-    border-radius: 8px;
-    padding: 14px 16px;
-    margin-bottom: 20px;
-    font-size: 12.5px;
-    color: var(--gray800);
-    line-height: 1.6;
-    border-left: 3px solid var(--gray400);
-  }
-
-  .panel-overlap-note strong {
-    font-weight: 500;
-    color: #1a1a18;
-  }
-
-  .decision-rule {
-    background: #f7f4ef;
-    border-radius: 8px;
-    padding: 14px 16px;
-    margin-top: 20px;
-    font-size: 12.5px;
-    color: #1a1a18;
-    line-height: 1.6;
-  }
-
-  .decision-rule .dr-label {
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--gray400);
-    font-weight: 500;
-    margin-bottom: 6px;
-  }
-
-  /* Overlay for mobile */
-  .overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.25);
-    z-index: 99;
-    opacity: 0;
-    transition: opacity 0.35s var(--ease);
-  }
-
-  .overlay.visible {
-    display: block;
-    opacity: 1;
-  }
-
-  @media (max-width: 700px) {
-    :root { --panel-w: 100vw; }
-    .diagram-area.shifted { margin-right: 0; }
-    .overlay { display: block; }
-  }
+  @media (max-width:700px) { :root { --panel-w:100vw; } .diagram-area.shifted { margin-right:0; } .overlay { display:block !important; } }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo-mark">R</div>
+  <div class="logo-mark"><img src="data:image/jpeg;base64,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EQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/AP4/6KKKDnCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/9D+P+iiig5wooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//R/j/ooooOcKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/0v4/6KKKDnCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoooo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IvwB8RgDgAapY/8AxVBcLI/tSrD8S+INL8JeHb7xRrcqW9np1vJczSSMERY4l3EkngDAr+Mv/iMm+Fv/AEQLxJ/4NLH/AOKr4M/4KWf8HOVx+3N+x74q/ZU+Efw31fwDN4yiSw1LVL29trhTpjOv2q3VItxzcRboSeNqsSCCBQXzI/nx/be/az8Vft0/ta+O/wBq3xXM8o8V6nI2lxtkLb6PbnyrCJFJOwC3VXdRgea8jbVLEV8sUAAcCigyCiiigQUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFT2l9q2k3tvrHh+7l07ULGaK5tLu3bZLb3EDB4pYyMYeN1VlPYgVBRQB/rj/8Eiv25tO/4KC/sIeB/jzcTW3/AAkhsY7HxFaW8iv9l1S3ULMjKHdkyRuAkIfB5Ar9Ma/y4f8AgjL/AMFu/Ef/AASd0/xj4C8S+E7zx54M8UzRahb6fZ3UVrLYago2SSJ5q4aOZAu5A6bXBbDFjj9zv+Iyb4W/9EC8Sf8Ag0sf/iqDZSR/Y58R/h74O+LXw/1v4W/EPT4NW0HxHYXGmajZXKb4bi1ukMcsTr0ZHRipHccV/j1ft0fsg+MP2Cf2uPHH7JfjIzT/APCJ35XS72f71/o9wPMsbncFVWZ4CqzFBsW4SVB9yv6+f+Iyb4W/9EC8Sf8Ag0sf/iq/nr/4LKf8FPvg1/wVV+JfhH40eDfhxq3gTxT4esX0i9udQu7a5jvNO3PLDGogG4NFK7sC7FQHYKoLE0EytY/GuiiigzCiiigD/9L+P+iiig5wooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//T/j/ooooOcKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/1P4/6KKKDnCiiigAooooAKKy/wC29F/5/IP+/i/40f23ov8Az+Qf9/F/xoA1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F/4TWp//ACPR/wARUP8AwSG/6GbxF/4TWp//ACPX+Z3RQHOf6Yn/ABFQ/wDBIb/oZvEX/hNan/8AI9H/ABFQ/wDBIb/oZvEX/hNan/8AI9f5ndFAc5/pif8AEVD/AMEhv+hm8Rf+E1qf/wAj0f8AEVD/AMEhv+hm8Rf+E1qf/wAj1/md0UBzn+mJ/wARUP8AwSG/6GbxF/4TWp//ACPR/wARUP8AwSG/6GbxF/4TWp//ACPX+Z3RQHOf6Yn/ABFQ/wDBIb/oZvEX/hNan/8AI9H/ABFQ/wDBIb/oZvEX/hNan/8AI9f5ndFAc5/pif8AEVD/AMEhv+hm8Rf+E1qf/wAj0f8AEVD/AMEhv+hm8Rf+E1qf/wAj1/md0UBzn//Q/j/ooooOcKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/0f4/6KKKDnCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/9L+P+iiig5wooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//T/j/ooooOcKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/1P4/6KKKDnCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/9k=" alt="RA" style="width:100%;height:100%;object-fit:cover;"/></div>
   <div class="header-text">
     <h1>Rhodes Advisors</h1>
     <p>Lead Accountability Map</p>
@@ -368,107 +85,133 @@
   <div class="diagram-area" id="diagramArea">
     <p class="diagram-hint">Click any section to view full responsibilities</p>
 
-    <svg class="diagram" viewBox="0 0 680 590" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M2 1L8 5L2 9" fill="none" stroke="#b4b2a9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </marker>
-      </defs>
+    <!--
+      Layout (700 × 668):
+      Corners: Marketing(TL) Tech(TR) Enrollment(BL) Finance(BR)
+      Edge overlaps: Mkt+Tech(top) Mkt+Enroll(left) Tech+Fin(right) Enroll+Fin(bottom)
+      Diagonal overlaps: Mkt+Finance(center-left) Tech+Enrollment(center-right)
+      Center: Analytics (grey area)
+    -->
+    <svg class="diagram" viewBox="0 0 700 668" xmlns="http://www.w3.org/2000/svg">
 
-      <!-- Connector lines -->
-      <line x1="120" y1="148" x2="340" y2="61" stroke="#ccc9c0" stroke-width="0.5"/>
-      <line x1="555" y1="148" x2="340" y2="61" stroke="#ccc9c0" stroke-width="0.5"/>
-      <line x1="120" y1="148" x2="115" y2="258" stroke="#ccc9c0" stroke-width="0.5"/>
-      <line x1="120" y1="408" x2="115" y2="320" stroke="#ccc9c0" stroke-width="0.5"/>
-      <line x1="555" y1="148" x2="540" y2="258" stroke="#ccc9c0" stroke-width="0.5"/>
-      <line x1="555" y1="408" x2="540" y2="320" stroke="#ccc9c0" stroke-width="0.5"/>
-      <line x1="555" y1="408" x2="340" y2="468" stroke="#ccc9c0" stroke-width="0.5"/>
-      <line x1="120" y1="408" x2="340" y2="468" stroke="#ccc9c0" stroke-width="0.5"/>
-      <line x1="340" y1="92" x2="340" y2="249" stroke="#b4b2a9" stroke-width="0.5" stroke-dasharray="4 3"/>
-      <line x1="195" y1="289" x2="253" y2="289" stroke="#b4b2a9" stroke-width="0.5" stroke-dasharray="4 3"/>
-      <line x1="428" y1="289" x2="460" y2="289" stroke="#b4b2a9" stroke-width="0.5" stroke-dasharray="4 3"/>
-      <line x1="340" y1="329" x2="340" y2="468" stroke="#b4b2a9" stroke-width="0.5" stroke-dasharray="4 3"/>
 
-      <!-- Marketing Lead (teal) -->
+
+
+      <!-- ══ MARKETING LEAD (teal, top-left) ══ -->
       <g class="node" data-id="marketing" tabindex="0" role="button" aria-label="Marketing Lead">
-        <rect x="35" y="105" width="170" height="86" rx="8" fill="#E1F5EE" stroke="#1D9E75" stroke-width="0.5"/>
-        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="120" y="137" text-anchor="middle" dominant-baseline="central" fill="#085041">Marketing lead</text>
-        <text font-family="'DM Sans', sans-serif" font-size="12" x="120" y="158" text-anchor="middle" dominant-baseline="central" fill="#0F6E56">Top-of-funnel growth</text>
-        <text font-family="'DM Sans', sans-serif" font-size="12" x="120" y="175" text-anchor="middle" dominant-baseline="central" fill="#0F6E56">Brand and positioning</text>
+        <!-- Main box -->
+        <rect class="node-bg" x="15" y="50" width="175" height="114" rx="8" fill="#E1F5EE" stroke="#1D9E75" stroke-width="0.5"/>
+        <!-- Badge strip (square top, rounded bottom) -->
+        <path d="M15,132 L190,132 L190,156 Q190,164 182,164 L23,164 Q15,164 15,156 Z" fill="#1D9E75" opacity="0.16"/>
+        <!-- Main text -->
+        <text font-family="'DM Sans',sans-serif" font-size="14" font-weight="500" fill="#085041" x="102" y="74" text-anchor="middle" dominant-baseline="central">Marketing lead</text>
+        <text font-family="'DM Sans',sans-serif" font-size="11.5" fill="#0F6E56" x="102" y="94" text-anchor="middle" dominant-baseline="central">Top-of-funnel growth</text>
+        <text font-family="'DM Sans',sans-serif" font-size="11.5" fill="#0F6E56" x="102" y="112" text-anchor="middle" dominant-baseline="central">Brand and positioning</text>
+        <!-- Badge text -->
+        <text font-family="'DM Sans',sans-serif" font-size="9" font-weight="500" fill="#085041" letter-spacing="0.08em" x="102" y="141" text-anchor="middle" dominant-baseline="central" opacity="0.65">ONE THING</text>
+        <text font-family="'DM Sans',sans-serif" font-size="11" font-weight="500" fill="#085041" x="102" y="156" text-anchor="middle" dominant-baseline="central">Lead volume and quality</text>
       </g>
 
-      <!-- Tech Lead (purple) -->
+
+      <!-- ══ TECH LEAD (purple, top-right) ══ -->
       <g class="node" data-id="tech" tabindex="0" role="button" aria-label="Tech Lead">
-        <rect x="470" y="105" width="170" height="86" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
-        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="555" y="137" text-anchor="middle" dominant-baseline="central" fill="#3C3489">Tech lead</text>
-        <text font-family="'DM Sans', sans-serif" font-size="12" x="555" y="158" text-anchor="middle" dominant-baseline="central" fill="#534AB7">Systems and martech</text>
-        <text font-family="'DM Sans', sans-serif" font-size="12" x="555" y="175" text-anchor="middle" dominant-baseline="central" fill="#534AB7">Data and integrations</text>
+        <rect class="node-bg" x="510" y="50" width="175" height="114" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+        <path d="M510,132 L685,132 L685,156 Q685,164 677,164 L518,164 Q510,164 510,156 Z" fill="#534AB7" opacity="0.14"/>
+        <text font-family="'DM Sans',sans-serif" font-size="14" font-weight="500" fill="#3C3489" x="597" y="74" text-anchor="middle" dominant-baseline="central">Tech lead</text>
+        <text font-family="'DM Sans',sans-serif" font-size="11.5" fill="#534AB7" x="597" y="94" text-anchor="middle" dominant-baseline="central">Systems and martech</text>
+        <text font-family="'DM Sans',sans-serif" font-size="11.5" fill="#534AB7" x="597" y="112" text-anchor="middle" dominant-baseline="central">Data and integrations</text>
+        <text font-family="'DM Sans',sans-serif" font-size="9" font-weight="500" fill="#3C3489" letter-spacing="0.08em" x="597" y="141" text-anchor="middle" dominant-baseline="central" opacity="0.65">ONE THING</text>
+        <text font-family="'DM Sans',sans-serif" font-size="11" font-weight="500" fill="#3C3489" x="597" y="156" text-anchor="middle" dominant-baseline="central">On time and on scope</text>
       </g>
 
-      <!-- Enrollment Lead (coral) -->
+
+      <!-- ══ ENROLLMENT LEAD (coral, bottom-left) ══ -->
       <g class="node" data-id="enrollment" tabindex="0" role="button" aria-label="Enrollment Lead">
-        <rect x="35" y="365" width="170" height="86" rx="8" fill="#FAECE7" stroke="#D85A30" stroke-width="0.5"/>
-        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="120" y="397" text-anchor="middle" dominant-baseline="central" fill="#712B13">Enrollment lead</text>
-        <text font-family="'DM Sans', sans-serif" font-size="12" x="120" y="418" text-anchor="middle" dominant-baseline="central" fill="#993C1D">Inquiry-to-enrollment</text>
-        <text font-family="'DM Sans', sans-serif" font-size="12" x="120" y="435" text-anchor="middle" dominant-baseline="central" fill="#993C1D">Yield and pipeline</text>
+        <rect class="node-bg" x="15" y="488" width="175" height="114" rx="8" fill="#FAECE7" stroke="#D85A30" stroke-width="0.5"/>
+        <path d="M15,570 L190,570 L190,594 Q190,602 182,602 L23,602 Q15,602 15,594 Z" fill="#D85A30" opacity="0.14"/>
+        <text font-family="'DM Sans',sans-serif" font-size="14" font-weight="500" fill="#712B13" x="102" y="512" text-anchor="middle" dominant-baseline="central">Enrollment lead</text>
+        <text font-family="'DM Sans',sans-serif" font-size="11.5" fill="#993C1D" x="102" y="532" text-anchor="middle" dominant-baseline="central">Inquiry-to-enrollment</text>
+        <text font-family="'DM Sans',sans-serif" font-size="11.5" fill="#993C1D" x="102" y="550" text-anchor="middle" dominant-baseline="central">Yield and pipeline</text>
+        <text font-family="'DM Sans',sans-serif" font-size="9" font-weight="500" fill="#712B13" letter-spacing="0.08em" x="102" y="579" text-anchor="middle" dominant-baseline="central" opacity="0.65">ONE THING</text>
+        <text font-family="'DM Sans',sans-serif" font-size="11" font-weight="500" fill="#712B13" x="102" y="594" text-anchor="middle" dominant-baseline="central">Forecast + achievement</text>
       </g>
 
-      <!-- Finance Lead (amber) -->
+
+      <!-- ══ FINANCE LEAD (amber, bottom-right) ══ -->
       <g class="node" data-id="finance" tabindex="0" role="button" aria-label="Finance Lead">
-        <rect x="470" y="365" width="170" height="86" rx="8" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
-        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="555" y="397" text-anchor="middle" dominant-baseline="central" fill="#633806">Finance lead</text>
-        <text font-family="'DM Sans', sans-serif" font-size="12" x="555" y="418" text-anchor="middle" dominant-baseline="central" fill="#854F0B">Revenue and ROI</text>
-        <text font-family="'DM Sans', sans-serif" font-size="12" x="555" y="435" text-anchor="middle" dominant-baseline="central" fill="#854F0B">Aid, pricing, forecast</text>
+        <rect class="node-bg" x="510" y="488" width="175" height="114" rx="8" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
+        <path d="M510,570 L685,570 L685,594 Q685,602 677,602 L518,602 Q510,602 510,594 Z" fill="#BA7517" opacity="0.14"/>
+        <text font-family="'DM Sans',sans-serif" font-size="14" font-weight="500" fill="#633806" x="597" y="512" text-anchor="middle" dominant-baseline="central">Finance lead</text>
+        <text font-family="'DM Sans',sans-serif" font-size="11.5" fill="#854F0B" x="597" y="532" text-anchor="middle" dominant-baseline="central">Financial modeling</text>
+        <text font-family="'DM Sans',sans-serif" font-size="11.5" fill="#854F0B" x="597" y="550" text-anchor="middle" dominant-baseline="central">Investment decisions</text>
+        <text font-family="'DM Sans',sans-serif" font-size="9" font-weight="500" fill="#633806" letter-spacing="0.08em" x="597" y="579" text-anchor="middle" dominant-baseline="central" opacity="0.65">ONE THING</text>
+        <text font-family="'DM Sans',sans-serif" font-size="11" font-weight="500" fill="#633806" x="597" y="594" text-anchor="middle" dominant-baseline="central">Accurate modeling</text>
       </g>
 
-      <!-- Overlap: Mkt + Tech -->
+
+      <!-- ══ EDGE OVERLAPS (solid border, single line) ══ -->
+
+      <!-- Mkt + Tech (top center) -->
       <g class="node" data-id="mkt-tech" tabindex="0" role="button" aria-label="Marketing and Tech overlap">
-        <rect x="260" y="30" width="160" height="62" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
-        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="340" y="52" text-anchor="middle" dominant-baseline="central" fill="#444441">Mkt + Tech</text>
-        <text font-family="'DM Sans', sans-serif" font-size="12" x="340" y="72" text-anchor="middle" dominant-baseline="central" fill="#5F5E5A">Mkt drives, Tech builds</text>
+        <rect class="node-bg" x="263" y="10" width="174" height="38" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+        <text font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#444441" x="350" y="29" text-anchor="middle" dominant-baseline="central">Mkt + Tech</text>
       </g>
 
-      <!-- Overlap: Mkt + Enrollment -->
+      <!-- Mkt + Enrollment (left) -->
       <g class="node" data-id="mkt-enrollment" tabindex="0" role="button" aria-label="Marketing and Enrollment overlap">
-        <rect x="35" y="258" width="160" height="62" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
-        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="115" y="278" text-anchor="middle" dominant-baseline="central" fill="#444441">Mkt + Enrollment</text>
-        <text font-family="'DM Sans', sans-serif" font-size="12" x="115" y="300" text-anchor="middle" dominant-baseline="central" fill="#5F5E5A">Enrollment owns outcome</text>
+        <rect class="node-bg" x="15" y="295" width="148" height="38" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+        <text font-family="'DM Sans',sans-serif" font-size="12.5" font-weight="500" fill="#444441" x="89" y="314" text-anchor="middle" dominant-baseline="central">Mkt + Enrollment</text>
       </g>
 
-      <!-- Overlap: Tech + Finance -->
+      <!-- Tech + Finance (right) -->
       <g class="node" data-id="tech-finance" tabindex="0" role="button" aria-label="Tech and Finance overlap">
-        <rect x="460" y="258" width="160" height="62" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
-        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="540" y="278" text-anchor="middle" dominant-baseline="central" fill="#444441">Tech + Finance</text>
-        <text font-family="'DM Sans', sans-serif" font-size="12" x="540" y="300" text-anchor="middle" dominant-baseline="central" fill="#5F5E5A">Finance owns the metric</text>
+        <rect class="node-bg" x="537" y="295" width="148" height="38" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+        <text font-family="'DM Sans',sans-serif" font-size="12.5" font-weight="500" fill="#444441" x="611" y="314" text-anchor="middle" dominant-baseline="central">Tech + Finance</text>
       </g>
 
-      <!-- Overlap: Enroll + Finance -->
+      <!-- Enroll + Finance (bottom center) -->
       <g class="node" data-id="enroll-finance" tabindex="0" role="button" aria-label="Enrollment and Finance overlap">
-        <rect x="260" y="468" width="160" height="62" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
-        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="340" y="488" text-anchor="middle" dominant-baseline="central" fill="#444441">Enroll + Finance</text>
-        <text font-family="'DM Sans', sans-serif" font-size="12" x="340" y="510" text-anchor="middle" dominant-baseline="central" fill="#5F5E5A">Finance owns policy</text>
+        <rect class="node-bg" x="263" y="612" width="174" height="38" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+        <text font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#444441" x="350" y="631" text-anchor="middle" dominant-baseline="central">Enroll + Finance</text>
       </g>
 
-      <!-- Analytics center (dashed) -->
-      <g class="node" data-id="analytics" tabindex="0" role="button" aria-label="Analytics grey area">
-        <rect x="253" y="249" width="175" height="80" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="1.5" stroke-dasharray="5 4"/>
-        <text font-family="'DM Sans', sans-serif" font-size="14" font-weight="500" x="340" y="270" text-anchor="middle" dominant-baseline="central" fill="#444441">Analytics</text>
-        <text font-family="'DM Sans', sans-serif" font-size="12" x="340" y="291" text-anchor="middle" dominant-baseline="central" fill="#5F5E5A">All four have opinions</text>
-        <text font-family="'DM Sans', sans-serif" font-size="12" x="340" y="312" text-anchor="middle" dominant-baseline="central" fill="#5F5E5A">Assign a clear owner</text>
+
+      <!-- ══ DIAGONAL OVERLAPS (solid border) ══ -->
+
+      <!-- Mkt + Finance — between Mkt+Enrollment and Analytics, level with Mkt+Enrollment -->
+      <g class="node" data-id="mkt-finance" tabindex="0" role="button" aria-label="Marketing and Finance overlap">
+        <rect class="node-bg" x="170" y="295" width="100" height="38" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+        <text font-family="'DM Sans',sans-serif" font-size="12" font-weight="500" fill="#444441" x="220" y="314" text-anchor="middle" dominant-baseline="central">Mkt + Finance</text>
       </g>
+
+      <!-- Tech + Enroll — between Analytics and Tech+Finance, level with Tech+Finance -->
+      <g class="node" data-id="tech-enrollment" tabindex="0" role="button" aria-label="Tech and Enrollment overlap">
+        <rect class="node-bg" x="430" y="295" width="100" height="38" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+        <text font-family="'DM Sans',sans-serif" font-size="12" font-weight="500" fill="#444441" x="480" y="314" text-anchor="middle" dominant-baseline="central">Tech + Enroll</text>
+      </g>
+
+
+      <!-- ══ ANALYTICS (grey area, heavy dashed, center) ══ -->
+      <g class="node" data-id="analytics" tabindex="0" role="button" aria-label="Analytics grey area">
+        <rect class="node-bg" x="277" y="278" width="146" height="76" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <text font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#444441" x="350" y="298" text-anchor="middle" dominant-baseline="central">Analytics</text>
+        <text font-family="'DM Sans',sans-serif" font-size="10.5" fill="#5F5E5A" x="350" y="318" text-anchor="middle" dominant-baseline="central">All four have accountability,</text>
+        <text font-family="'DM Sans',sans-serif" font-size="10.5" fill="#5F5E5A" x="350" y="337" text-anchor="middle" dominant-baseline="central">ad hoc role clarity required</text>
+      </g>
+
     </svg>
 
     <div class="legend">
       <div class="legend-item">
         <div class="legend-swatch" style="background:#E1F5EE;border:1px solid #1D9E75;"></div>
-        <span>Sole owner, fixes the problem</span>
+        <span>Sole owner</span>
       </div>
       <div class="legend-item">
         <div class="legend-swatch" style="background:#F1EFE8;border:1px solid #888780;"></div>
-        <span>Shared input, one leads</span>
+        <span>Shared overlap</span>
       </div>
       <div class="legend-item">
-        <div class="legend-swatch dashed"></div>
+        <div class="legend-swatch" style="background:#F1EFE8;border:2px dashed #888780;"></div>
         <span>Grey area, needs owner</span>
       </div>
     </div>
@@ -476,394 +219,232 @@
 
   <div class="overlay" id="overlay"></div>
 
-  <div class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Responsibility detail">
+  <div class="panel" id="panel" role="dialog" aria-modal="true">
     <div class="panel-header">
-      <div class="panel-lead-label">
+      <div class="panel-meta">
         <span class="panel-tag" id="panelTag"></span>
         <div class="panel-title" id="panelTitle"></div>
         <div class="panel-subtitle" id="panelSubtitle"></div>
+        <div class="one-thing-box" id="otBox" style="display:none">
+          <div class="one-thing-lbl">One thing</div>
+          <div class="one-thing-val" id="otVal"></div>
+        </div>
       </div>
-      <button class="close-btn" id="closeBtn" aria-label="Close panel">&#x2715;</button>
+      <button class="close-btn" id="closeBtn" aria-label="Close">&#x2715;</button>
     </div>
     <div class="panel-body" id="panelBody"></div>
   </div>
 </div>
 
 <script>
-const data = {
+const D = {
   marketing: {
-    title: "Marketing lead",
-    subtitle: "Sole accountability zone — no committee needed",
-    tag: "Primary owner",
-    tagBg: "#E1F5EE",
-    tagColor: "#085041",
-    type: "primary",
-    items: [
-      {
-        title: "Brand and market position",
-        body: "How programs are positioned, named, and messaged in the market. Differentiation from competitors. No other lead resolves a positioning problem — they can surface it, but the Marketing Lead owns the fix."
-      },
-      {
-        title: "Top-of-funnel inquiry volume",
-        body: "When qualified inquiry volume is too low, that is a marketing problem. The Marketing Lead owns paid media strategy, channel mix, spend allocation, and vendor oversight. When the funnel is starving at the top, neither Enrollment nor Finance fixes it."
-      },
-      {
-        title: "Campaign creative and execution",
-        body: "Copy, creative direction, landing pages, email content strategy, and ad creative all live here. The Marketing Lead approves narrative direction and ensures every campaign asset accurately and compellingly reflects the program's value proposition."
-      },
-      {
-        title: "Vendor and agency oversight",
-        body: "When a paid media agency, SEO partner, or content vendor is underperforming, the Marketing Lead owns that relationship and remediation. Tech may have opinions about tracking or integrations, but the vendor accountability chain ends with Marketing."
-      },
-      {
-        title: "SEO and organic content strategy",
-        body: "If a program is invisible in organic search, that is a Marketing Lead problem. Keyword strategy, content calendar, and inbound architecture belong here exclusively."
-      },
-      {
-        title: "Messaging accuracy and value proposition clarity",
-        body: "If prospective students do not understand what a program does, who it is for, or why it matters, that is a Marketing Lead failure. The Enrollment Lead can surface the symptom — drop-off is high, inquiries ask basic questions — but the fix is a marketing one."
-      },
-      {
-        title: "Program launch readiness (go-to-market)",
-        body: "When a new program needs to go to market, the Marketing Lead owns the GTM strategy: audience targeting, positioning, channel strategy, and launch sequencing. The Enrollment Lead activates the funnel once leads arrive. The Marketing Lead builds the environment those leads come from."
-      }
+    title:"Marketing lead", subtitle:"Primary accountability zone",
+    tag:"Primary owner", tagBg:"#E1F5EE", tagColor:"#085041",
+    oneThing:"Lead volume and quality", otBg:"#d4f0e4", otColor:"#085041",
+    items:[
+      {t:"Brand and market position",b:"How programs are positioned, named, and messaged in the market. Differentiation from competitors. The Marketing Lead is the primary driver of positioning strategy — depending on the engagement, RA may lead this work directly or advise the university's internal team as they execute it."},
+      {t:"Top-of-funnel inquiry volume",b:"When qualified inquiry volume is too low, that is a marketing problem. The Marketing Lead focuses on paid media strategy, channel mix, spend allocation, and vendor oversight. Whether RA manages this directly or the university's team does varies by client — but the Marketing Lead is accountable for diagnosing the gap and recommending the path forward."},
+      {t:"Lead quality standards",b:"Not all inquiries are equal. The Marketing Lead is responsible for setting and monitoring lead quality standards — right audience, right program fit, right intent signal. This may mean RA builds the criteria, the university applies them, or both work through it together depending on the client's internal capacity."},
+      {t:"Campaign creative and execution",b:"Copy, creative direction, landing pages, email content strategy, and ad creative. The Marketing Lead guides narrative direction and ensures campaign assets reflect the program's value proposition. Execution may sit with RA, the university's in-house team, or a vendor — the lead's role is to ensure alignment regardless."},
+      {t:"Vendor and agency oversight",b:"When a paid media agency, SEO partner, or content vendor is underperforming, the Marketing Lead is responsible for surfacing it and recommending action. Whether RA manages vendor relationships directly or advises the university on how to manage them depends on the scope of the engagement."},
+      {t:"SEO and organic content strategy",b:"Keyword strategy, content calendar, and inbound architecture are Marketing Lead responsibilities. RA may develop and execute these directly, or advise the university's team — but the Marketing Lead is accountable for ensuring a strategy exists and is being followed."},
+      {t:"Program launch readiness (go-to-market)",b:"The Marketing Lead drives GTM strategy for new programs: audience targeting, positioning, channel strategy, and launch sequencing. Depending on the engagement, RA may own execution end-to-end or hand off to the university's team with a clear brief. Either way, the Marketing Lead ensures the strategy is sound before launch."}
     ],
-    rule: "If you could fix it by rewriting the ads, changing the messaging, reallocating spend, or replacing a vendor — it belongs to the Marketing Lead."
+    rule:"If the problem is rooted in how programs are messaged, where spend is allocated, or how leads are generated — the Marketing Lead should be involved, whether that means RA leads the fix or guides the university's team through it."
   },
-
   tech: {
-    title: "Tech lead",
-    subtitle: "Sole accountability zone — no committee needed",
-    tag: "Primary owner",
-    tagBg: "#EEEDFE",
-    tagColor: "#3C3489",
-    type: "primary",
-    items: [
-      {
-        title: "CRM architecture and configuration",
-        body: "Platform decisions, data structure, automation logic, and system performance. If the CRM is misfiring, misrouting, or failing to segment correctly, this is a Tech Lead problem to solve — not an enrollment or marketing one."
-      },
-      {
-        title: "Martech stack selection and governance",
-        body: "Evaluating, procuring, and deprecating marketing and enrollment technology tools. The Tech Lead carries the decision on what gets added to the stack, what gets removed, and how tools are governed across the org."
-      },
-      {
-        title: "Data infrastructure and integrations",
-        body: "How systems talk to each other. API connections, data pipelines, and feed reliability. When data is not flowing between platforms correctly, this is a Tech Lead problem regardless of which team surfaces it."
-      },
-      {
-        title: "Analytics implementation and instrumentation",
-        body: "GA4, GTM, tracking pixels, and dashboard infrastructure. If data is not being captured, is misconfigured, or is producing misleading numbers because of faulty implementation, the Tech Lead owns the fix."
-      },
-      {
-        title: "Website and digital infrastructure",
-        body: "Uptime, page performance, technical SEO health, and the development roadmap. Marketing may identify a landing page problem; the Tech Lead resolves it on the infrastructure side."
-      },
-      {
-        title: "Systems security and data compliance",
-        body: "Data governance, FERPA compliance for technology systems, access controls, and audit readiness. No other lead can resolve a data security or compliance exposure at the systems level."
-      }
+    title:"Tech lead", subtitle:"Primary accountability zone",
+    tag:"Primary owner", tagBg:"#EEEDFE", tagColor:"#3C3489",
+    oneThing:"On time and on scope projects", otBg:"#e0deff", otColor:"#3C3489",
+    items:[
+      {t:"CRM architecture and configuration",b:"Platform decisions, data structure, automation logic, and system performance are Tech Lead territory. RA may configure systems directly or advise the university's internal tech team — depending on the client, one or both parties will have hands on the platform."},
+      {t:"Project delivery against scope and timeline",b:"The Tech Lead is accountable for ensuring work gets delivered on time and within scope. Whether RA is the primary delivery vehicle or is managing a university-side project team, the Tech Lead owns the plan and flags when it is at risk."},
+      {t:"Martech stack selection and governance",b:"Evaluating, procuring, and deprecating marketing and enrollment technology tools. RA may lead this assessment directly or advise the university's leadership team — the Tech Lead's role is to ensure decisions are grounded in evidence and operational fit, not vendor relationships or inertia."},
+      {t:"Data infrastructure and integrations",b:"How systems talk to each other — API connections, data pipelines, and feed reliability. The Tech Lead is accountable for identifying where data flow breaks down and recommending solutions, whether RA's team resolves it or the university's IT function does."},
+      {t:"Analytics implementation and instrumentation",b:"GA4, GTM, tracking pixels, and dashboard infrastructure. The Tech Lead is responsible for ensuring data is captured correctly. In some engagements RA implements this directly; in others, RA audits the university's existing implementation and advises on corrections."},
+      {t:"Website and digital infrastructure",b:"Uptime, page performance, technical SEO health, and the development roadmap. The Tech Lead surfaces problems and drives resolution — execution may sit with RA, a university web team, or an external vendor depending on the client's setup."},
+      {t:"Systems security and data compliance",b:"Data governance, FERPA compliance for technology systems, and access controls. The Tech Lead ensures these considerations are part of every systems decision. RA may advise the university's IT and compliance teams, or take a more direct role depending on the engagement structure."}
     ],
-    rule: "If you could fix it by reconfiguring a system, rebuilding an integration, or replacing a technical component — it belongs to the Tech Lead."
+    rule:"If the problem is rooted in a system, a timeline, or a data flow — the Tech Lead should be involved. Whether the fix sits with RA or the university depends on the engagement, but the Tech Lead owns the diagnosis and the recommendation."
   },
-
   enrollment: {
-    title: "Enrollment lead",
-    subtitle: "Sole accountability zone — no committee needed",
-    tag: "Primary owner",
-    tagBg: "#FAECE7",
-    tagColor: "#712B13",
-    type: "primary",
-    items: [
-      {
-        title: "Inquiry response and follow-up cadences",
-        body: "Speed-to-contact, outreach sequences, and advisor communication protocols. Once a prospect raises their hand, how quickly and how well the team responds is a pure Enrollment Lead problem."
-      },
-      {
-        title: "Application pipeline management",
-        body: "Monitoring application volume, completion rates, and decision timelines by program. If applications are stalling or abandoning, the Enrollment Lead owns the diagnosis and the fix."
-      },
-      {
-        title: "Yield strategy and admitted-to-enrolled conversion",
-        body: "Converting admitted students to enrolled students. Financial aid leveraging, event strategy, and personalized outreach during the decision period are Enrollment Lead responsibilities. Finance sets the aid policy; Enrollment executes it."
-      },
-      {
-        title: "Advisor performance and capacity",
-        body: "Hiring, training, managing, and holding enrollment advisors accountable. Load distribution, performance standards, and professional development sit here. No other lead fixes an advisor performance problem."
-      },
-      {
-        title: "Prospect communications post-inquiry",
-        body: "What advisors say, how they say it, and how frequently they reach out once a lead is in the funnel. Marketing owns top-of-funnel messaging. Enrollment owns the conversation after the hand-raise."
-      },
-      {
-        title: "Enrollment reporting to institutional leadership",
-        body: "Communicating funnel health, projections, and variance to Deans, Provosts, and institutional stakeholders. The Enrollment Lead is accountable for the accuracy and cadence of these reports."
-      }
+    title:"Enrollment lead", subtitle:"Primary accountability zone",
+    tag:"Primary owner", tagBg:"#FAECE7", tagColor:"#712B13",
+    oneThing:"Enrollment forecasting and achievement", otBg:"#fce0d4", otColor:"#712B13",
+    items:[
+      {t:"Enrollment forecast accuracy",b:"The Enrollment Lead is responsible for the enrollment projection — how many students are expected to enroll, by program, by term. Finance models around that number and Marketing allocates spend against it. Whether RA builds the forecast directly or the university's enrollment team owns it with RA's guidance depends on the engagement."},
+      {t:"Enrollment achievement against target",b:"When the term closes, the Enrollment Lead is accountable for understanding the gap or the gain. This may mean RA conducts the post-mortem analysis, the university's leadership team leads it with RA's input, or both work through it together — but the Enrollment Lead ensures the analysis happens and the findings are acted on."},
+      {t:"Inquiry response and follow-up cadences",b:"Speed-to-contact, outreach sequences, and communication protocols once a prospect raises their hand. The Enrollment Lead is responsible for ensuring these standards exist and are met. In some engagements RA designs and monitors the cadence; in others, RA advises the university's enrollment team on where their current approach is falling short."},
+      {t:"Application pipeline management",b:"Monitoring application volume, completion rates, and decision timelines by program. The Enrollment Lead is accountable for spotting where the pipeline is stalling. Whether RA or the university's team takes corrective action depends on the engagement scope."},
+      {t:"Yield strategy and admitted-to-enrolled conversion",b:"Converting admitted students to enrolled students involves aid deployment, event strategy, and personalized outreach. The Enrollment Lead shapes the approach and monitors performance. Execution may sit with the university's enrollment team, RA, or a mix — the Enrollment Lead's role is to ensure the strategy is coherent and the university has what it needs to execute it."},
+      {t:"Advisor performance and capacity",b:"Enrollment advisor hiring, training, and performance management are university-side functions in most engagements. The Enrollment Lead's role here is typically advisory — identifying capacity gaps, setting performance benchmarks, and helping the university's leadership team build and manage an effective team."},
+      {t:"Enrollment reporting to institutional leadership",b:"Communicating funnel health, projections, and variance to Deans, Provosts, and institutional stakeholders. RA may produce these reports directly, co-develop them with the university's enrollment team, or advise on what the university's leadership should be tracking — depending on the engagement."}
     ],
-    rule: "If you could fix it by changing what happens after a prospect raises their hand — the cadence, the conversation, the process — it belongs to the Enrollment Lead."
+    rule:"If the problem involves what happens after a prospect raises their hand — the forecast, the conversion process, or the advisor team — the Enrollment Lead should be driving the response, whether that is RA taking direct action or advising the university's team."
   },
-
   finance: {
-    title: "Finance lead",
-    subtitle: "Sole accountability zone — no committee needed",
-    tag: "Primary owner",
-    tagBg: "#FAEEDA",
-    tagColor: "#633806",
-    type: "primary",
-    items: [
-      {
-        title: "Tuition pricing and discount rate policy",
-        body: "Setting list price and net tuition revenue targets by program. Pricing decisions belong exclusively to the Finance Lead. Other leads provide context (enrollment demand, competitive benchmarks) but do not set the number."
-      },
-      {
-        title: "Financial aid packaging strategy",
-        body: "Scholarship ladders, aid policy design, and discount rate governance. The Finance Lead owns the framework. The Enrollment Lead deploys it with individual students, but cannot override the policy without Finance approval."
-      },
-      {
-        title: "Revenue forecasting and budget modeling",
-        body: "Translating enrollment projections into financial outcomes. What does a 5% enrollment shortfall mean for net tuition revenue? The Finance Lead answers that question and owns the accuracy of the model."
-      },
-      {
-        title: "Program financial sustainability analysis",
-        body: "Determining whether a program is financially viable based on margin, not just enrollment volume. Recommending continuation, restructuring, or sunsetting based on financial performance. This call belongs to the Finance Lead."
-      },
-      {
-        title: "Cost-per-enrolled-student targets and CAC benchmarks",
-        body: "Setting the financial standard for how much the institution can afford to spend to acquire an enrolled student. Marketing and Enrollment optimize toward this number — the Finance Lead sets it."
-      },
-      {
-        title: "Budget allocation across the enrollment function",
-        body: "How dollars are distributed across marketing spend, enrollment operations, advisor headcount, and technology. The Finance Lead owns the allocation decision and holds the other three leads accountable to their budgets."
-      }
+    title:"Finance lead", subtitle:"Primary accountability zone",
+    tag:"Primary owner", tagBg:"#FAEEDA", tagColor:"#633806",
+    oneThing:"Accurate modeling", otBg:"#fde9c0", otColor:"#633806",
+    items:[
+      {t:"Financial modeling for institutional investment decisions",b:"The Finance Lead is responsible for models that inform CFO and senior leadership decisions — program net revenue, operating margin, and return on investment. RA may build these models directly (as with the seven-year financial model at UVA OEDI across 40+ programs) or work alongside the university's finance team to develop and validate them, depending on the client's internal capacity."},
+      {t:"Program growth rate projections",b:"Projecting how fast a program can realistically grow and what that growth costs. The Finance Lead owns the analytical framework and the key assumptions. In some engagements RA produces these projections; in others, RA pressure-tests projections the university's team has built and helps leadership understand what the numbers actually mean."},
+      {t:"Staffing models tied to enrollment targets",b:"When enrollment scales, staffing must scale with it. The Finance Lead is responsible for connecting enrollment projections to headcount requirements. RA may build these models from scratch or help the university's finance and HR teams develop a methodology they can sustain independently."},
+      {t:"Scenario-based planning and sensitivity analysis",b:"The Finance Lead produces scenario-based projections that let the CFO stress-test assumptions — what happens at 5% growth versus 12%, or if a program launch takes longer than projected. RA typically leads this analytical work, but the university's leadership team must engage with the outputs for them to drive real decisions."},
+      {t:"Cost-sharing and funding architecture",b:"How the central online function is funded relative to colleges — through cost recovery, central appropriation, or revenue-share incentives — is one of the highest-leverage advisory questions RA addresses. The Finance Lead develops options and the principles that make them sustainable, but the final structure is always a university decision."},
+      {t:"Revenue forecasting and net tuition modeling",b:"Translating enrollment projections into financial outcomes — net tuition revenue after aid, program-level margin, and total contribution to the institution. RA may lead this modeling or support the university's finance team in developing it. Either way, the Finance Lead ensures the assumptions are defensible and the outputs are understood by the people using them."},
+      {t:"Setting operating teams up for execution",b:"The Finance Lead's job is to produce models that give Marketing, Enrollment, and Tech the financial clarity they need to operate — target CAC, advisor headcount budgets, break-even enrollment by program. These outputs may come from RA directly or emerge through a structured advisory process with the university's finance function."}
     ],
-    rule: "If you could fix it by changing a number, a policy, or a financial model — it belongs to the Finance Lead."
+    rule:"If the problem is rooted in a financial model, a budget assumption, or a lack of clarity on what the numbers mean — the Finance Lead should be involved. RA may build the analysis or guide the university's team through it depending on the engagement."
   },
-
   "mkt-tech": {
-    title: "Marketing + Tech",
-    subtitle: "Shared input — marketing drives, Tech builds",
-    tag: "Shared zone",
-    tagBg: "#F1EFE8",
-    tagColor: "#444441",
-    type: "overlap",
-    overlapNote: "Both leads have legitimate standing here. The rule is not about who is right — it is about who carries the outcome. When they conflict, use the decision rule below.",
-    items: [
-      {
-        title: "Campaign infrastructure and tracking setup",
-        body: "UTM architecture, pixel implementation, and tag management configuration. Marketing defines what needs to be measured; Tech builds the infrastructure that captures it. If campaigns are running blind, both leads share accountability — Marketing for not specifying requirements, Tech for not implementing correctly."
-      },
-      {
-        title: "Martech tool selection when Marketing is the primary user",
-        body: "When the primary beneficiary of a tool is the marketing function — email platforms, ad tech, landing page tools — Marketing leads the requirements definition and Tech leads the evaluation, procurement, and integration."
-      },
-      {
-        title: "Website performance as it affects campaign outcomes",
-        body: "Slow load times, broken forms, and poor mobile experiences affect conversion rates. Marketing surfaces the impact; Tech resolves the underlying cause. Neither can fix this alone."
-      },
-      {
-        title: "Digital execution where strategy and systems intersect",
-        body: "New landing page builds, A/B testing infrastructure, and personalization engines require both leads to be active. Marketing owns the hypothesis and the creative. Tech owns the tooling and the measurement."
-      }
+    title:"Marketing + Tech", subtitle:"Marketing drives, Tech builds",
+    tag:"Shared zone", tagBg:"#F1EFE8", tagColor:"#444441",
+    note:"Both leads have standing here. Marketing defines what needs to happen; Tech determines how it can be built. Depending on the engagement, RA may hold one or both of these roles — or may be advising university-side teams who hold them.",
+    items:[
+      {t:"Campaign infrastructure and tracking setup",b:"UTM architecture, pixel implementation, and tag management. Marketing defines what needs to be measured; Tech builds the infrastructure that captures it. This work may be executed by RA, by the university's internal teams, or by a combination — but both leads need to be aligned on requirements before either side builds anything."},
+      {t:"Martech tool selection when Marketing is the primary user",b:"Marketing leads requirements definition; Tech leads evaluation, procurement, and integration. Whether RA is managing this process directly or advising the university's marketing and IT teams, the division of responsibility between these two leads should be explicit before decisions are made."},
+      {t:"Website performance as it affects campaign conversion",b:"Slow load times, broken forms, and poor mobile experiences affect conversion rates. Marketing surfaces the impact; Tech resolves the underlying cause. In many university environments, the website is managed by a central communications team — the Marketing and Tech Leads need to know who that is and how to work with them."},
+      {t:"Digital execution where strategy and systems intersect",b:"Landing page builds, A/B testing infrastructure, and personalization require both leads. Marketing owns the hypothesis and the creative direction. Tech owns the tooling. Whether RA executes this work or advises the university's teams, the leads need a shared view of who is responsible for what before work begins."}
     ],
-    rule: "If the question is 'what should we say and to whom' — Marketing leads. If the question is 'how do we build it and measure it' — Tech leads."
+    rule:"If the question is 'what should we say and to whom' — Marketing leads the answer. If the question is 'how do we build it and measure it' — Tech leads. The division holds whether RA is executing directly or advising the university's teams."
   },
-
   "mkt-enrollment": {
-    title: "Marketing + Enrollment",
-    subtitle: "Shared input — Enrollment owns the outcome",
-    tag: "Shared zone",
-    tagBg: "#F1EFE8",
-    tagColor: "#444441",
-    type: "overlap",
-    overlapNote: "The handoff between marketing and enrollment is the most common source of dropped balls in higher ed. Marketing fills the funnel; Enrollment converts it. Neither team can succeed without the other's cooperation.",
-    items: [
-      {
-        title: "Lead nurture content and email sequences",
-        body: "Marketing produces the content; Enrollment advises on what prospects actually ask, object to, and respond to. Nurture sequences require both. Marketing owns the writing and the send logic. Enrollment owns the feedback loop that improves them."
-      },
-      {
-        title: "Messaging consistency across the funnel",
-        body: "When an ad makes a claim and an advisor says something different, prospects notice. Aligning what Marketing says in campaigns with what Enrollment says in conversations requires both leads to review and approve touchpoints. Neither can enforce consistency alone."
-      },
-      {
-        title: "Inquiry-stage prospect experience",
-        body: "The moment between a prospect clicking an ad and an advisor making first contact involves both leads. Marketing owns the landing page and the auto-responder. Enrollment owns everything that happens after the form submission."
-      },
-      {
-        title: "Program positioning feedback from the field",
-        body: "Advisors hear what prospects say about programs every day. That intelligence should directly inform marketing messaging. The Enrollment Lead owns the feedback loop; the Marketing Lead owns the action on it."
-      }
+    title:"Marketing + Enrollment", subtitle:"Enrollment owns the outcome",
+    tag:"Shared zone", tagBg:"#F1EFE8", tagColor:"#444441",
+    note:"Marketing fills the funnel; Enrollment converts it. The handoff between them is the most common source of dropped balls in higher ed. This overlap exists whether RA holds both leads, one of them, or is advising university teams who hold both.",
+    items:[
+      {t:"Lead nurture content and email sequences",b:"Marketing produces the content; Enrollment advises on what prospects actually ask, object to, and respond to. In some engagements RA writes and manages these sequences directly; in others, RA provides the framework and the university's team executes it. Either way, both leads need to be actively reviewing performance together."},
+      {t:"Messaging consistency across the funnel",b:"When an ad makes a claim and an advisor says something different, prospects notice. Aligning campaign messaging with advisor conversations is a shared responsibility. RA may audit this directly or facilitate the alignment conversation between the university's marketing and enrollment teams."},
+      {t:"Inquiry-stage prospect experience",b:"Marketing owns the landing page and initial auto-response; Enrollment owns what happens after submission. The seam between those two is where most prospect experiences break — and it often involves both RA-managed and university-managed touchpoints."},
+      {t:"Program positioning feedback from the field",b:"Advisors hear what prospects say about programs every day. That intelligence should inform marketing messaging. The Enrollment Lead owns the feedback loop; the Marketing Lead acts on it. Whether this exchange happens within RA's team or across RA and a university enrollment team, it needs a regular cadence."}
     ],
-    rule: "If the prospect has not yet submitted an inquiry — Marketing owns the problem. Once they raise their hand — Enrollment owns the relationship."
+    rule:"If the prospect has not yet submitted an inquiry, the Marketing Lead should drive the response. Once they raise their hand, the Enrollment Lead takes the relationship. This boundary holds regardless of whether RA or the university holds either role."
   },
-
   "tech-finance": {
-    title: "Tech + Finance",
-    subtitle: "Shared input — Finance owns the metric",
-    tag: "Shared zone",
-    tagBg: "#F1EFE8",
-    tagColor: "#444441",
-    type: "overlap",
-    overlapNote: "Finance depends on Tech to produce accurate, timely data. Tech depends on Finance to define what matters. Without alignment here, financial models run on bad numbers and technology investment decisions are made without ROI context.",
-    items: [
-      {
-        title: "Reporting architecture and dashboard infrastructure",
-        body: "Tech builds the dashboards; Finance defines what goes in them. When a report shows the wrong number, both leads are accountable — Finance for not specifying requirements clearly, Tech for not implementing them correctly."
-      },
-      {
-        title: "Technology budget decisions and ROI evaluation",
-        body: "Finance owns the budget and the standard for return. Tech owns the cost estimate and the benefit projection. Neither can make a sound technology investment decision without the other's input."
-      },
-      {
-        title: "Data accuracy in financial models",
-        body: "When Finance builds a revenue forecast off enrollment data that Tech is responsible for capturing and surfacing, any error in the data pipeline becomes both teams' problem. They must agree on a single source of truth."
-      },
-      {
-        title: "Vendor spend analysis for technology tools",
-        body: "Finance reviews the spend; Tech defends the value. Annual technology stack reviews require both leads at the table to evaluate whether each tool is earning its cost."
-      }
+    title:"Tech + Finance", subtitle:"Finance owns the metric",
+    tag:"Shared zone", tagBg:"#F1EFE8", tagColor:"#444441",
+    note:"Finance depends on Tech to produce accurate, timely data. Tech depends on Finance to define what matters. This is true whether RA holds both leads, one of them, or is working alongside university-side teams who hold them.",
+    items:[
+      {t:"Reporting architecture and dashboard infrastructure",b:"Tech builds the dashboards; Finance defines what goes in them. In some engagements RA builds and maintains both; in others, RA advises on dashboard design while the university's IT or data team handles implementation. Both leads need to sign off on what is being measured and how."},
+      {t:"Technology budget decisions and ROI evaluation",b:"Finance owns the budget standard; Tech owns the cost estimate and benefit case. Whether RA is advising the university's CFO directly or working through internal finance and IT teams, these two leads need to arrive at technology investment decisions together."},
+      {t:"Data accuracy in financial models",b:"When Finance builds a revenue forecast off data that Tech is responsible for capturing, errors in the data pipeline become a shared problem. RA may own one side of this, the university may own the other — a clear agreement on the source of truth is essential before either team builds on the data."},
+      {t:"Vendor spend analysis for technology tools",b:"Finance reviews the spend; Tech defends the value. In university environments, technology procurement often involves procurement offices, IT governance, and budget committees alongside RA's advisory input. Both leads need to know who holds the decision."}
     ],
-    rule: "If the question is 'is the number right' — Finance leads. If the question is 'why isn't the number appearing' — Tech leads."
+    rule:"If the question is 'is the number right' — Finance leads the answer. If the question is 'why is the number not appearing' — Tech leads. The division holds whether RA holds these roles directly or is advising the university's finance and technology teams."
   },
-
   "enroll-finance": {
-    title: "Enrollment + Finance",
-    subtitle: "Shared input — Finance sets policy, Enrollment executes",
-    tag: "Shared zone",
-    tagBg: "#F1EFE8",
-    tagColor: "#444441",
-    type: "overlap",
-    overlapNote: "Aid strategy is the single highest-leverage decision in enrollment management, and it sits directly at the intersection of these two leads. Misalignment here costs institutions money and students.",
-    items: [
-      {
-        title: "Aid packaging and scholarship deployment",
-        body: "Finance designs the aid ladder and sets discount rate guardrails. Enrollment applies it to individual admitted students. Enrollment cannot exceed the parameters Finance has set, but Finance relies on Enrollment's field experience to know whether the aid packages are competitive."
-      },
-      {
-        title: "Yield modeling and enrollment projections",
-        body: "Finance uses enrollment projections to build financial models. Enrollment builds those projections from funnel data. If the projections are wrong, both leads own part of the failure — Enrollment for inaccurate funnel reads, Finance for inadequate scenario modeling."
-      },
-      {
-        title: "Discount rate strategy by program",
-        body: "Some programs can sustain a higher discount to drive volume; others cannot. Finance sets the ceiling by program. Enrollment advises on competitive context. This is a standing conversation, not a once-a-year decision."
-      },
-      {
-        title: "Enrollment targets tied to financial goals",
-        body: "Finance sets revenue targets; Enrollment translates them into enrollment goals. When targets are misaligned — either too aggressive given market conditions or too conservative given capacity — both leads must surface the conflict and resolve it together."
-      }
+    title:"Enrollment + Finance", subtitle:"Finance sets policy, Enrollment executes",
+    tag:"Shared zone", tagBg:"#F1EFE8", tagColor:"#444441",
+    note:"Aid strategy is the highest-leverage intersection of these two leads. Misalignment here costs institutions money and students. In most university engagements, aid policy is a university decision — the Finance and Enrollment Leads shape the analysis and recommendations, but final authority rests with institutional leadership.",
+    items:[
+      {t:"Aid packaging and scholarship deployment",b:"Finance frames the aid strategy and sets discount rate parameters; Enrollment provides the field intelligence that keeps the policy competitive. RA may model aid scenarios directly or advise the university's financial aid and enrollment teams as they develop the strategy together."},
+      {t:"Yield modeling and enrollment projections",b:"Finance uses enrollment projections to build financial models; Enrollment builds those projections from funnel data. Whether RA produces these projections or the university's teams do, both leads need to validate the inputs before either side builds on them."},
+      {t:"Discount rate strategy by program",b:"Some programs can sustain a higher discount to drive volume; others cannot. The Finance Lead frames the ceiling; the Enrollment Lead advises on competitive context. This is an ongoing conversation — RA typically facilitates it, and the university retains the final call on policy."},
+      {t:"Enrollment targets tied to financial goals",b:"Finance sets revenue targets; Enrollment translates them into enrollment goals. When these are misaligned, both leads need to surface the conflict. RA may mediate this directly or help the university's leadership team structure the conversation between their finance and enrollment functions."}
     ],
-    rule: "If the question is 'what is our aid policy' — Finance leads. If the question is 'how do we deploy that policy with individual students' — Enrollment leads."
+    rule:"If the question is 'what should our aid policy be' — Finance leads the analysis. If the question is 'how do we apply that policy with individual students' — Enrollment leads. In most cases, the university holds final authority on policy; RA's role is to ensure the decision is well-informed."
   },
-
-  analytics: {
-    title: "Analytics",
-    subtitle: "Grey area — requires a named owner",
-    tag: "Grey area",
-    tagBg: "#F1EFE8",
-    tagColor: "#444441",
-    type: "grey",
-    overlapNote: "All four leads have a legitimate claim on analytics. Marketing needs attribution data. Tech owns the infrastructure. Enrollment needs funnel reporting. Finance needs ROI measurement. This is the most common source of accountability gaps in enrollment organizations.",
-    items: [
-      {
-        title: "Marketing attribution reporting",
-        body: "Which channels are driving qualified inquiries? What is the cost per inquiry by source? Marketing needs these numbers to allocate spend. Without a named analytics owner, these reports either do not exist or are built inconsistently by each team."
-      },
-      {
-        title: "Enrollment funnel reporting",
-        body: "Conversion rates from inquiry to application, application to admit, admit to enrolled — by program, by source, by time period. Enrollment needs these numbers to manage pipeline. Finance needs them to build forecasts. Without a single source of truth, each team builds its own version."
-      },
-      {
-        title: "Technology and systems performance reporting",
-        body: "Is the CRM performing as expected? Are integrations passing data accurately? Tech needs visibility here. But these reports often live in the same infrastructure as marketing and enrollment dashboards, creating shared-tool confusion about who maintains what."
-      },
-      {
-        title: "ROI and cost-per-enrolled-student measurement",
-        body: "Finance needs a number that combines marketing spend, enrollment operations cost, and aid packaging into a true CAC. Producing that number requires data from all four functions. Without a named owner who can access all four data sources, this calculation either never gets made or is made differently by each lead."
-      },
-      {
-        title: "The recommended ownership model",
-        body: "Assign analytics ownership to the Tech Lead, with defined service-level agreements to each of the other three leads. Tech builds and maintains the infrastructure. Marketing, Enrollment, and Finance each get a named report owner within the Tech function responsible for their specific dashboards. This preserves accountability without fragmenting the data infrastructure."
-      }
+  "mkt-finance": {
+    title:"Marketing + Finance", subtitle:"Finance sets the ceiling, Marketing deploys within it",
+    tag:"Shared zone", tagBg:"#F1EFE8", tagColor:"#444441",
+    note:"Marketing needs budget authority; Finance needs ROI accountability. This overlap is often undermanaged in higher ed — either Finance sets budgets without understanding marketing's actual cost drivers, or Marketing spends without clear return expectations. RA's role is to bring these two leads into alignment, whether RA holds one or both functions or is advising university teams who do.",
+    items:[
+      {t:"Marketing budget authorization by program",b:"Finance frames program-level marketing budgets based on the financial model; Marketing operates within them. In some engagements RA advises the CFO or Provost directly on budget allocation; in others, RA works with the university's marketing leadership to build the business case for the budget they need."},
+      {t:"CAC benchmarks and LTV:CAC targets",b:"The Finance Lead sets the financial threshold for what a student is worth to acquire; Marketing optimizes toward that number. Whether RA establishes these benchmarks directly or helps the university's finance and marketing teams agree on them, the number needs to exist and both leads need to be working toward it."},
+      {t:"Attribution methodology and reporting standards",b:"How marketing spend gets credited to enrolled students is a shared decision. Finance needs an auditable number; Marketing needs a methodology that reflects how the funnel actually works. RA typically leads the design of this methodology, but it only functions if the university's data and finance teams can sustain it."},
+      {t:"Program-level marketing investment decisions",b:"When a new program launches or an existing one underperforms, Finance and Marketing need to agree on whether increased spend is justified. RA may advise university leadership directly on this decision or help the two functions structure their own decision-making process."},
+      {t:"ROI reporting and spend reconciliation",b:"Marketing produces the performance data; Finance ties it to financial outcomes. RA may build and maintain this reporting layer or help the university establish it internally — but both leads need to be reviewing the same numbers on a regular cadence."}
     ],
-    rule: "Without a named analytics owner, this becomes everyone's problem and no one's accountability. Name the owner now."
+    rule:"If the question is 'how much should we spend on this program' — Finance leads the answer. If the question is 'how should we deploy that spend' — Marketing leads. RA's role is to ensure these two leads are working from the same financial picture, whether RA holds them directly or advises the university's teams."
+  },
+  "tech-enrollment": {
+    title:"Tech + Enrollment", subtitle:"Enrollment defines the need, Tech builds the system",
+    tag:"Shared zone", tagBg:"#F1EFE8", tagColor:"#444441",
+    note:"Enrollment advisors work inside systems that Tech is responsible for building and maintaining. This overlap is particularly important in university engagements where RA may hold one lead and the university's internal team holds the other — clear requirements and communication between the two are essential.",
+    items:[
+      {t:"CRM workflow design for enrollment",b:"Enrollment defines what the workflow needs to accomplish; Tech configures the system to make it happen. In many university engagements, the CRM is owned and operated by the university's IT or enrollment team — the Tech Lead's role may be to advise on configuration rather than build it directly."},
+      {t:"Advisor tooling and system access",b:"What tools advisors have, how they access data, and what they can see in the CRM are Tech decisions made in response to Enrollment requirements. When advisors are university employees working in university-owned systems, RA typically advises on what the setup should look like and works with the university's team to get there."},
+      {t:"Lead routing automation",b:"How inquiries are assigned to advisors, re-routed, and escalated requires both leads. Enrollment defines the rules; Tech implements them. Whether RA builds the automation or advises the university's team on how to configure it, the business logic must be agreed on by both leads before implementation."},
+      {t:"Enrollment reporting dashboards",b:"The metrics, thresholds, and views that advisors and enrollment managers use daily are defined by Enrollment and built by Tech. In university engagements, RA may design the dashboard framework while the university's IT or data team handles the build — both leads need to validate the output."},
+      {t:"Automated outreach systems",b:"Enrollment defines the cadence, content, and triggers for automated outreach; Tech builds the system that executes it. In many engagements this spans RA-managed tools and university-managed platforms — both leads need to know where each component lives and who is responsible for maintaining it."}
+    ],
+    rule:"If the question is 'what do enrollment advisors need the system to do' — Enrollment leads the answer. If the question is 'how do we build or configure it' — Tech leads. Whether RA or the university's team holds either role, this division of responsibility needs to be explicit."
+  },
+  analytics: {
+    title:"Analytics", subtitle:"Grey area — ad hoc role clarity required",
+    tag:"Grey area", tagBg:"#F1EFE8", tagColor:"#444441",
+    note:"All four leads have a legitimate claim on analytics. Marketing needs attribution data. Tech owns the infrastructure. Enrollment needs funnel reporting. Finance needs ROI measurement. Given we don't have a named owner at RA, clear roles need to be determined each time through mutual agreement by leads.",
+    items:[
+      {t:"Marketing attribution reporting",b:"Which channels are driving qualified inquiries? What is the cost per inquiry by source? These questions need answers for Marketing to allocate spend effectively. Whether RA produces this reporting or the university's marketing team does, the Marketing Lead needs to know where the numbers come from and who maintains them."},
+      {t:"Enrollment funnel reporting",b:"Conversion rates from inquiry to application, application to admit, admit to enrolled — by program, by source, by term. Enrollment needs these to manage pipeline; Finance needs them to build forecasts. In university engagements, this data often lives in systems RA does not directly control — establishing a shared view requires agreement across leads."},
+      {t:"Technology and systems performance reporting",b:"CRM health, integration reliability, and attribution infrastructure performance. These reports often live in the same systems as marketing and enrollment dashboards. Whether RA manages the infrastructure or advises the university's IT team, both the Tech Lead and the leads who depend on the data need to be clear on who maintains what."},
+      {t:"ROI and cost-per-enrolled-student measurement",b:"Producing a true CAC requires data from all four functions. Whether RA builds this metric or the university's finance and analytics teams do, it will not get made accurately without deliberate collaboration across leads and a shared agreement on methodology."},
+      {t:"How to approach analytics ownership on each engagement",b:"Because there is no standing named owner, each engagement needs an explicit agreement at the outset: who produces which reports, who validates them, and who the other leads go to when numbers look wrong. RA typically facilitates this conversation, but the university's leadership team needs to ratify the structure."}
+    ],
+    rule:null
   }
 };
 
-const panel = document.getElementById('panel');
-const panelTitle = document.getElementById('panelTitle');
-const panelSubtitle = document.getElementById('panelSubtitle');
-const panelTag = document.getElementById('panelTag');
-const panelBody = document.getElementById('panelBody');
-const closeBtn = document.getElementById('closeBtn');
+const panel   = document.getElementById('panel');
+const pTitle  = document.getElementById('panelTitle');
+const pSub    = document.getElementById('panelSubtitle');
+const pTag    = document.getElementById('panelTag');
+const pBody   = document.getElementById('panelBody');
+const otBox   = document.getElementById('otBox');
+const otVal   = document.getElementById('otVal');
+const closeBtn= document.getElementById('closeBtn');
 const overlay = document.getElementById('overlay');
-const diagramArea = document.getElementById('diagramArea');
+const diagArea= document.getElementById('diagramArea');
 
 function openPanel(id) {
-  const d = data[id];
-  if (!d) return;
-
-  panelTag.textContent = d.tag;
-  panelTag.style.background = d.tagBg;
-  panelTag.style.color = d.tagColor;
-  panelTitle.textContent = d.title;
-  panelSubtitle.textContent = d.subtitle;
+  const d = D[id]; if (!d) return;
+  pTag.textContent = d.tag;
+  pTag.style.background = d.tagBg;
+  pTag.style.color = d.tagColor;
+  pTitle.textContent = d.title;
+  pSub.textContent   = d.subtitle;
+  if (d.oneThing) {
+    otBox.style.display = 'flex';
+    otBox.style.background = d.otBg;
+    otVal.style.color = d.otColor;
+    otVal.textContent = d.oneThing;
+  } else { otBox.style.display = 'none'; }
 
   let html = '';
-
-  if (d.overlapNote) {
-    html += `<div class="panel-overlap-note">${d.overlapNote}</div>`;
-  }
-
-  html += '<ul class="responsibility-list">';
+  if (d.note) html += `<div class="overlap-note">${d.note}</div>`;
+  html += '<ul class="resp-list">';
   d.items.forEach(item => {
-    const accentColor = d.tagColor;
-    html += `<li class="responsibility-item">
-      <div class="item-accent" style="background:${accentColor};"></div>
-      <div class="item-content">
-        <div class="item-title">${item.title}</div>
-        <div class="item-body">${item.body}</div>
-      </div>
+    html += `<li class="resp-item">
+      <div class="item-dot" style="background:${d.tagColor}"></div>
+      <div><div class="item-title">${item.t}</div><div class="item-body">${item.b}</div></div>
     </li>`;
   });
   html += '</ul>';
+  if (d.rule) html += `<div class="rule-box"><div class="rule-label">Decision rule</div>${d.rule}</div>`;
 
-  if (d.rule) {
-    html += `<div class="decision-rule">
-      <div class="dr-label">Decision rule</div>
-      <div>${d.rule}</div>
-    </div>`;
-  }
-
-  panelBody.innerHTML = html;
-  panelBody.scrollTop = 0;
-
+  pBody.innerHTML = html;
+  pBody.scrollTop = 0;
   panel.classList.add('open');
-  diagramArea.classList.add('shifted');
+  diagArea.classList.add('shifted');
   overlay.classList.add('visible');
 }
 
 function closePanel() {
   panel.classList.remove('open');
-  diagramArea.classList.remove('shifted');
+  diagArea.classList.remove('shifted');
   overlay.classList.remove('visible');
 }
 
-document.querySelectorAll('.node[data-id]').forEach(node => {
-  node.addEventListener('click', () => openPanel(node.dataset.id));
-  node.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      openPanel(node.dataset.id);
-    }
-  });
+document.querySelectorAll('.node[data-id]').forEach(n => {
+  n.addEventListener('click', () => openPanel(n.dataset.id));
+  n.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); openPanel(n.dataset.id); } });
 });
 
 closeBtn.addEventListener('click', closePanel);
 overlay.addEventListener('click', closePanel);
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closePanel();
-});
+document.addEventListener('keydown', e => { if (e.key==='Escape') closePanel(); });
 </script>
 </body>
 </html>
